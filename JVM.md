@@ -35,15 +35,15 @@
 
 ## 类加载
 
-![1641093402982](C:\Users\JunHao\AppData\Roaming\Typora\typora-user-images\1641093402982.png)
+![1641093402982](https://cdn.jsdelivr.net/gh/github/junhaoHub/N480@master//img/1641093402982.png)
 
 ## JVM调优步骤
 
-![1641093981756](C:\Users\JunHao\AppData\Roaming\Typora\typora-user-images\1641093981756.png)
+![1641093981756](https://cdn.jsdelivr.net/gh/github/junhaoHub/N480@master//img/1641093981756.png)
 
 ## class文件的编译器翻译并执行
 
-![1641094882362](C:\Users\JunHao\AppData\Roaming\Typora\typora-user-images\1641094882362.png)
+![1641094882362](https://cdn.jsdelivr.net/gh/github/junhaoHub/N480@master//img/1641094882362.png)
 
 
 ## 虚拟机指令的运用
@@ -370,7 +370,7 @@
 ## 什么是TLAB
 	从内存模型而不是垃圾收集的角度，对Eden区域进行划分，JVM为每个线程分配了一个私有缓存区域，它包含在Eden区
 
-![1641641948735](C:\Users\JunHao\AppData\Roaming\Typora\typora-user-images\1641641948735.png)
+![1641641948735](https://cdn.jsdelivr.net/gh/github/junhaoHub/N480@master//img/1641641948735.png)
 
 
 	尽管不是所有的对象实例都能够在TLAB中成功分配内存，但JVM确实是将TLAB作为内存分配的首选。
@@ -680,7 +680,6 @@ Safe Point的选择很重要，如果太少可能导致Gc等待的时间太长�
 # JVM性能调优（实践）
 
 # JVM性能监控（实践）
-
 
 
 
