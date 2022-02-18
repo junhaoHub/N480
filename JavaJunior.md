@@ -543,4 +543,69 @@ System.out.println(arr4[1][0]);//数据
 ```
 ### 内存解析
 
-![image-20220218114916413](C:\Users\Administrator\AppData\Roaming\Typora\typora-user-images\image-20220218114916413.png)
+![image-20220218204703445](E:\Typora\JavaJunior\image-20220218204703445.png)
+
+![image-20220218204724391](E:\Typora\JavaJunior\image-20220218204724391.png)
+### 数组的复制
+
+```java
+//arr2 = arr1//并不是真正的复制,只是将arr2的地址值赋给了arr1,相当于arr2是arr1的快捷方式
+int arr2[i] = new int [arr1.length]
+for(i=0;i<arr2.length;i++)
+```
+
+### 数组的反转
+```java
+//for循环遍历并不是真正的将数组里面的值进行反转
+for(min=0,max=arr.length-1;min<=max;max--,min++){
+                int temp =arr[min];
+                arr[min] =arr[max];
+                arr[max] =temp;
+}
+```
+
+### 数组元素的查找
+#### 线性查找
+```java
+String dest = "BB";
+dest="CC";
+boolean isFlag = true;
+for(int i=0;i<arr.length;i++){
+	if(dest.equals(arr[i])){
+	System.out.println("找到了指定的元素，位置为："+i);
+	isFlage=false;
+	break;
+	}
+}
+if(isFlage){
+	System.out.println("很遗憾，没有找到的啦~")
+}
+```
+#### 二分法查找（折半查找）
+所要寻找的数组必须有序
+```java
+int[] arr2 = new int[]{-98,-34,2,34,54,66,48,78,105,210};
+
+int dest1 = -34;
+dest1 = 35;
+int head=0;
+int end =arr2.length-1;
+boolean isFlage = true;
+while(head <= end){
+	int middle = (head+end)/2
+	if(dest1 == arr2[middle]){
+		System.out.println("找到了指定的元素，位置为："+middle);
+		isFlag = false;
+		break;
+	}else if(arr2[middle]>dest1){
+		end=middle-1;
+	}else{
+		head = middle+1;
+	}
+
+}
+```
+
+
+
+
