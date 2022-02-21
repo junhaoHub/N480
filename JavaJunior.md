@@ -232,7 +232,13 @@ Go
 
 ## 特点
 关键字中所有的字母均为小写
-    
+
+## Main
+里面的变量,都是局部变量.
+
+## New
+实例化的对象都在堆空间
+
 ## 标识符
 Java对各种变量、方法和类等要素命名时使用的单词称为标识符
 	
@@ -605,7 +611,28 @@ while(head <= end){
 
 }
 ```
+# 封装性
+	在实际问题中,我们往往需要给属性赋值加入额外的限制条件
+	这个条件就不能在属性声明时体现,我们只能通过方法进行限制条件的添加
+	我们需要避免用户在使用"对象.属性"的方式对属性进行赋值.则需要将属性声明为私有的
+## 代码示例
+```java
+private int number;
+public void setNumber(int number) {
+    if (number>10){
+        this.number = number;
+    }else {
+        System.out.println("数据非法");
+    }
+}
+public int getNumber(){
+    return number;//这个return的功能才是将函数xxx传递到main方法区中
+    }
+}   
+```
+## 为什么会有封装性
+	封装性就是保证类内部的的定义不被外部可见
+	所有属性都必须使用private封装,封装后的属性如果要被外部所访问,要定义相应的setter和getter方法.
 
-
-
-
+# 权限修饰符
+JAVA规定的4种权限(从大到小):private>缺省>protected>public
