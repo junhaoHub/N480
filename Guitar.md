@@ -9,11 +9,11 @@ C、   D、E、   F、  G、  A、B
 
 
 
-![image-20220222145419657](https://cdn.jsdelivr.net/gh/github/junhaoHub/N480@master//img/image-20220222145419657.png)
+![image-20220222145945165](E:\Typora\Guitar\image-20220222145945165.png)
 
 ## 六弦音
 
-![1641569776644](C:\Users\JunHao\AppData\Roaming\Typora\typora-user-images\1641569776644.png)
+![image-20220222154834832](E:\Typora\Guitar\image-20220222154834832.png)
 
 1弦（细）          2弦    3弦    4弦    5弦         6弦（粗）
 E	          			B	    G	   D	   A	         E
@@ -21,7 +21,7 @@ mi(高)           	   si 、  sol、 re、  la(低)、   mi(低)
 
 注记：
 
-![1641569894246](C:\Users\JunHao\AppData\Roaming\Typora\typora-user-images\1641569894246.png)
+![image-20220222150256365](E:\Typora\Guitar\image-20220222150256365.png)
 
 # 和弦
 
@@ -29,7 +29,7 @@ mi(高)           	   si 、  sol、 re、  la(低)、   mi(低)
 
 53231323
 
-![1641139751704](C:\Users\JunHao\AppData\Roaming\Typora\typora-user-images\1641139751704.png)
+![image-20220222150856116](E:\Typora\Guitar\image-20220222150856116.png)
 
 63231323
 
@@ -39,13 +39,9 @@ mi(高)           	   si 、  sol、 re、  la(低)、   mi(低)
 
 
 # 认识吉他谱
-![1641140728044](C:\Users\JunHao\AppData\Roaming\Typora\typora-user-images\1641140728044.png)
+![image-20220222151320122](E:\Typora\Guitar\image-20220222151320122.png)
 
-![1641140790291](C:\Users\JunHao\AppData\Roaming\Typora\typora-user-images\1641140790291.png)
-
-![1641140893398](C:\Users\JunHao\AppData\Roaming\Typora\typora-user-images\1641140893398.png)
-
-![1641141387299](C:\Users\JunHao\AppData\Roaming\Typora\typora-user-images\1641141387299.png)
+![image-20220222151457640](E:\Typora\Guitar\image-20220222151457640.png)
 
 ​    空弦代表不按和弦，假如2弦上 标记的不是X而是3，则需要单独按住3品
 
@@ -59,11 +55,11 @@ mi(高)           	   si 、  sol、 re、  la(低)、   mi(低)
 
 	以两个八分音符为一拍，每小节有四拍
 
-![1641477724853](C:\Users\JunHao\AppData\Roaming\Typora\typora-user-images\1641477724853.png)
+![image-20220222152927130](E:\Typora\Guitar\image-20220222152927130.png)
 
 	以四个十六分音符为一拍，每小节有四拍
 
-![1641477849841](C:\Users\JunHao\AppData\Roaming\Typora\typora-user-images\1641477849841.png)
+![image-20220222153136826](E:\Typora\Guitar\image-20220222153136826.png)
 
 	前八后十六音符为一拍 哒 哒哒
 
@@ -75,7 +71,7 @@ mi(高)           	   si 、  sol、 re、  la(低)、   mi(低)
 
 	切分音符 哒哒 啊哒
 
-![1641480216431](C:\Users\JunHao\AppData\Roaming\Typora\typora-user-images\1641480216431.png)
+![image-20220222153348402](E:\Typora\Guitar\image-20220222153348402.png)
 
 	（啊）哒 （啊）哒
 
@@ -89,19 +85,19 @@ mi(高)           	   si 、  sol、 re、  la(低)、   mi(低)
 	全音是从一品到三品，从0品到二品
 	半音是从一品到二品，从0品到一品
 
-
+![image-20220222153529468](E:\Typora\Guitar\image-20220222153529468.png)
 
 	七音阶版独奏小乐曲《小蜜蜂》
 
-![1641566789843](C:\Users\JunHao\AppData\Roaming\Typora\typora-user-images\1641566789843.png)
+![image-20220222154249390](E:\Typora\Guitar\image-20220222154249390.png)
 
 do、re、mi、fa、sol、la、ti
 
 1、   2、 3、  4、  5、   6、7
 
-![1643038661591](C:\Users\JunHao\AppData\Roaming\Typora\typora-user-images\1643038661591.png)
+![image-20220222154313761](E:\Typora\Guitar\image-20220222154313761.png)
 
 C调mi型音阶
 
-**![1643912311257](C:\Users\JunHao\AppData\Roaming\Typora\typora-user-images\1643912311257.png)** 
+![image-20220222153711779](E:\Typora\Guitar\image-20220222153711779.png)
 

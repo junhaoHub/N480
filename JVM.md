@@ -17,7 +17,7 @@
 	Graal VM --> "Run Programs Faster Anywhere"
 
 ##  java.exe到java类加载
-![1640967583528](C:\Users\JunHao\AppData\Roaming\Typora\typora-user-images\1640967583528.png)
+![image-20220222165823382](E:\Typora\JVM\image-20220222165823382.png)
 
 # 第二章 字节码
 ## 1).加载
@@ -35,15 +35,15 @@
 
 ## 类加载
 
-![1641093402982](https://cdn.jsdelivr.net/gh/github/junhaoHub/N480@master//img/1641093402982.png)
+![image-20220222160511097](E:\Typora\JVM\image-20220222160511097.png)
 
 ## JVM调优步骤
 
-![1641093981756](https://cdn.jsdelivr.net/gh/github/junhaoHub/N480@master//img/1641093981756.png)
+![image-20220222164452690](E:\Typora\JVM\image-20220222164452690.png)
 
 ## class文件的编译器翻译并执行
 
-![1641094882362](https://cdn.jsdelivr.net/gh/github/junhaoHub/N480@master//img/1641094882362.png)
+![image-20220222155556804](E:\Typora\JVM\image-20220222155556804.png)
 
 
 ## 虚拟机指令的运用
@@ -145,7 +145,7 @@
 
 ## 类加载器分类
 
-![1641355635172](C:\Users\JunHao\AppData\Roaming\Typora\typora-user-images\1641355635172.png)
+![image-20220222170127692](E:\Typora\JVM\image-20220222170127692.png)
 
 类加载器分为两类：C语言编写的启动类加载器 和 Java 编写的ClassLoader加载器以及继承至类加载器的用户自定义类，出于安全考虑，BootStrap启动类加载器只加载包名为java，javax，sun开头的类
 
@@ -160,7 +160,8 @@
 	扩展加载源 比如数据库、网络、甚至是电视机机顶盒进行加载
 	防止源码泄露 Java代码很容易被编译和泄露，可以进行编译加密。那么类加载也需要自定义，还原加密的字节码。
 # 第四章 双亲委派机制
-![1641360418285](C:\Users\JunHao\AppData\Roaming\Typora\typora-user-images\1641360418285.png)
+
+![image-20220222170713294](E:\Typora\JVM\image-20220222170713294.png)
 
 	如果一个类加载器收到了类加载请求，它并不会自己先去加载，而是把这个请求委托给父类的加载器去执行；如果父类加载器还存在其父类加载器，则进一步委托，依次递归，请求最终将到达顶层的启动类加载器；
 	如果父类加载器可以完成类加载任务，就成功返回，倘若父类加载器无法完成此类加载任务，子加载器才会尝试自己去加载，这就是双亲委派机制。
@@ -178,11 +179,16 @@
 
 ## TomCat的破坏双亲委派机制的自定义类
 
-![1641365920148](C:\Users\JunHao\AppData\Roaming\Typora\typora-user-images\1641365920148.png)
+![image-20220222170944196](E:\Typora\JVM\image-20220222170944196.png)
 
-加载顺序
+### 自定义加载类加载顺序
+当应用需要到某个类时，则会按照下面的顺序进行类加载
 
-![1641366122978](C:\Users\JunHao\AppData\Roaming\Typora\typora-user-images\1641366122978.png)
+	1.使用bootstrap引号类加载器加载
+	2.使用system系统类加载器加载
+	3.使用应用类加载器在WEB-INF/classes中加载
+	4.使用应用类加载器在WEB-INF/lib中加载
+	5.使用common类加载器在CATALINA_HOME/lib中加载
 
 ## 面试题
 ### Tomcat使用双亲委派机制可以吗
@@ -199,9 +205,10 @@
 
 # 运行时内存栈
 
-![1641375206051](C:\Users\JunHao\AppData\Roaming\Typora\typora-user-images\1641375206051.png)
+![image-20220222172729781](E:\Typora\JVM\image-20220222172729781.png)
 
-## 为什么需要程序计数器
+## 计数器
+
 	PC寄存器用来存储指向下一条指令的地址，也是即将要执行的指令代码。执行引擎的字节码解释器工作时，就是通过改变这个计数器的值来选取下一条需要执行的指令。
 
 ## 为什么执行native方法，是undefined
@@ -238,7 +245,7 @@
 ## 方法和栈针的关系
 	一个桟帧对应着一个方法，栈的特性决定了在栈底的桟帧1，所对应的方法一还没被执行完，就执行了方法二，也就是对应的桟帧2，在一条活动线程中，一个时间点上，只会有一个活动的栈帧，这个桟帧被称为当前桟帧。
 
-![1641435657924](C:\Users\JunHao\AppData\Roaming\Typora\typora-user-images\1641435657924.png)
+![image-20220222172231204](E:\Typora\JVM\image-20220222172231204.png)
 
 ## 栈的主要存储内容
 	每个桟帧中存储着：局部变量表
@@ -311,7 +318,7 @@
 
 ## 堆的内部结构
 
-![1641614561734](C:\Users\JunHao\AppData\Roaming\Typora\typora-user-images\1641614561734.png)
+![image-20220222173304845](E:\Typora\JVM\image-20220222173304845.png)
 	新生代+老年代+元空间
 	新生代是指对象的创建和消亡持续时间都很低
 	老年代生命周期很长，有时与GC生命周期相同
@@ -370,7 +377,7 @@
 ## 什么是TLAB
 	从内存模型而不是垃圾收集的角度，对Eden区域进行划分，JVM为每个线程分配了一个私有缓存区域，它包含在Eden区
 
-![1641641948735](https://cdn.jsdelivr.net/gh/github/junhaoHub/N480@master//img/1641641948735.png)
+![image-20220222180512907](E:\Typora\JVM\image-20220222180512907.png)
 
 
 	尽管不是所有的对象实例都能够在TLAB中成功分配内存，但JVM确实是将TLAB作为内存分配的首选。
@@ -378,7 +385,7 @@
 	默认情况下，TLAB空间的内存非常小，仅占有整个Eden空间的1%，当然我们可以通过选:“-xX:TLABwasteTargetPercent”设置TLAB空间所占用Eden空间的百分比大小。一旦对象在TLAB空间分配内存失败时，JVM就会尝试着通过使用加锁机制确保数据操作的子性，从而直接在Eden空间中分配内存。
 
 ## 什么是方法区
-	方法区（Method Area）与]ava堆一样，是各个线程共享的内存区域。
+	方法区（Method Area）与java堆一样，是各个线程共享的内存区域。
 
 ## 什么时候会出现元空间溢出
 	加载大量的第三方Jar包：TomCat部署的工程过多（30~50）；大量动态的生成反射类
@@ -399,7 +406,7 @@
 
 # 对象内存布局
 
-![1641965842768](C:\Users\JunHao\AppData\Roaming\Typora\typora-user-images\1641965842768.png)
+![image-20220222180835648](E:\Typora\JVM\image-20220222180835648.png)
 
 ## 你有几种方式创建对象
 	最常见的方式
@@ -421,8 +428,6 @@
 	虚拟机遇到一条new指令，首先去检查这个指令的参数能否在Metaspace常量池中定位到一个类的符号引用，并且检查这个符号引用代表的类是否已经被加载、解析和初始化。（即判断类元信息是否存在）
 	如果没有类的符号引用，那么在双亲委派模式下，使用当前类加载器以ClassLoader+包名+类名为Key进行查找对应的.class文件
 	如果找到，则进行类的加载，并生成对应的Class类对象，如果没有找到，则抛出ClassNOtFoundException
-
-
 
 	2.为对象分配内存
 		首先计算对象占用空间大小，接着在堆中划分一块内存给新对象
