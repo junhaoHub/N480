@@ -9,7 +9,7 @@ C、   D、E、   F、  G、  A、B
 
 
 
-![1641483687028](C:\Users\JunHao\AppData\Roaming\Typora\typora-user-images\1641483687028.png)
+![image-20220222145419657](https://cdn.jsdelivr.net/gh/github/junhaoHub/N480@master//img/image-20220222145419657.png)
 
 ## 六弦音
 
