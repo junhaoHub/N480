@@ -428,7 +428,7 @@
 	虚拟机遇到一条new指令，首先去检查这个指令的参数能否在Metaspace常量池中定位到一个类的符号引用，并且检查这个符号引用代表的类是否已经被加载、解析和初始化。（即判断类元信息是否存在）
 	如果没有类的符号引用，那么在双亲委派模式下，使用当前类加载器以ClassLoader+包名+类名为Key进行查找对应的.class文件
 	如果找到，则进行类的加载，并生成对应的Class类对象，如果没有找到，则抛出ClassNOtFoundException
-
+	
 	2.为对象分配内存
 		首先计算对象占用空间大小，接着在堆中划分一块内存给新对象
 		如果实例成员变量是引用变量，仅分配引用变量即可，即4个字节大小
@@ -436,16 +436,16 @@
 
 
 	指针碰撞：意思是所有用过的内存在一边，空闲的内存在另外一边，中间放着一个指针作为分界点的指示器，分配内存就仅仅是把指针向空闲那边挪动一段与对象大小相等的距离罢了。如果垃圾收集器选择的是Serial、ParNew这种基于压缩算法的，虚拟机采用这种分配方式。一般使用带有compact（整理）过程的收集器时，使用指针碰撞。
-![1641905633963](C:\Users\JunHao\AppData\Roaming\Typora\typora-user-images\1641905633963.png)
+![image-20220222212435634](E:\Typora\JVM\image-20220222212435634.png)
 
-![1641905766809](C:\Users\JunHao\AppData\Roaming\Typora\typora-user-images\1641905766809.png)
+![image-20220222212650168](E:\Typora\JVM\image-20220222212650168.png)
 
 
 	空闲列表：虚拟机维护了一个列表，记录上哪些内存块是可用的，再分配的时候从列表中找到一块足够大的空间划分给对象实例，并更新列表上的内容，如果垃圾回收器选择的是CMS算法
 
-![1641906147783](C:\Users\JunHao\AppData\Roaming\Typora\typora-user-images\1641906147783.png)
+![image-20220222213028538](E:\Typora\JVM\image-20220222213028538.png)
 
-![1641906259763](C:\Users\JunHao\AppData\Roaming\Typora\typora-user-images\1641906259763.png)
+![image-20220222212953710](E:\Typora\JVM\image-20220222212953710.png)
 
 	3.处理并发安全问题
 		CAS ( compare And Swap ）失败重试、区域加锁:保证指针更新操作的原子性
@@ -475,7 +475,7 @@
 
 ## 执行引擎是如何工作的
 
-![1642059718174](C:\Users\JunHao\AppData\Roaming\Typora\typora-user-images\1642059718174.png)
+![image-20220222213341476](E:\Typora\JVM\image-20220222213341476.png)
 
 	1）执行引擎在执行的过程中究竟需要执行什么样的字节码指令完全依赖于PC寄存器。
 	2）每当执行完一项指令操作后，PC寄存器就会更新下一条需要被执行的指令地址。
@@ -483,11 +483,11 @@
 
 ## 代码编译和执行过程
 
-![1642060049403](C:\Users\JunHao\AppData\Roaming\Typora\typora-user-images\1642060049403.png)
+![image-20220222213711298](E:\Typora\JVM\image-20220222213711298.png)
 
 ## 为什么Java是半编译半解释型的语言
 
-![1642060542229](C:\Users\JunHao\AppData\Roaming\Typora\typora-user-images\1642060542229.png)
+![image-20220222213753436](E:\Typora\JVM\image-20220222213753436.png)
 
 	解释型：出现一条指令，执行一次指令，有可能同一条指令执行了n多次，但启动速度快，采用热执行
 	
@@ -557,7 +557,7 @@
 	优点：实现简单，垃圾对象便于辨识，判定效率高，回收没有延迟性
 	缺点：无法解决处理循环引用的问题
 
-![1642246351058](C:\Users\JunHao\AppData\Roaming\Typora\typora-user-images\1642246351058.png)
+![image-20220222214527467](E:\Typora\JVM\image-20220222214527467.png)
 
 ## 什么叫内存泄露
 	当垃圾回收器检测不到需要清理的垃圾时，则此垃圾所占用的内存称为内存泄露
