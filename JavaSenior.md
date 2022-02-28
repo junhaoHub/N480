@@ -290,7 +290,7 @@ public class DeadLockTest {
 	便于线程管理       
 
 # 常用类
-## String类
+## String
 字符串，所有java中的字符串字面值都作为此类的实例实现
 ### 特性
 	String是一个final类,代表不可变的字符序列,不可被继承
@@ -320,17 +320,96 @@ String s2 = new String("test");
 
 ![image-20220228113215834](E:\Typora\JavaSenior\image-20220228113215834.png)
 
+### 方法
+#### charAt(int index) 
+	返回指定索引处的 char 值
+#### compareTo(String anotherString) 
+	按字典顺序比较两个字符串
+#### compareToIgnoreCase(String str) 
+	按字典顺序比较两个字符串，不考虑大小写 
+#### concat(String str) 
+	将指定字符串连接到此字符串的结尾 
+#### contains(CharSequence s) 
+	当且仅当此字符串包含指定的 char 值序列时，返回 true
+#### endsWith(String suffix) 
+	测试此字符串是否以指定的后缀结束
+#### equals(Object anObject) 
+	将此字符串与指定的对象比较
+#### equalsIgnoreCase(String anotherString) 
+	将此 String 与另一个 String 比较，不考虑大小写 
+#### hashCode() 
+	返回此字符串的哈希码
+#### indexOf(String str) 
+	返回指定子字符串在此字符串中第一次出现处的索引
+#### indexOf(String str, int fromIndex) 
+	返回指定子字符串在此字符串中第一次出现处的索引，从指定的索引开始 
+#### isEmpty() 
+	当且仅当 length() 为 0 时返回 true 
+#### lastIndexOf(int ch) 
+	返回指定字符在此字符串中最后一次出现处的索引
+#### lastIndexOf(int ch, int fromIndex) 
+	返回指定字符在此字符串中最后一次出现处的索引，从指定的索引处开始进行反向搜索 
+#### length() 
+	返回此字符串的长度
+#### matches(String regex) 
+	告知此字符串是否匹配给定的正则表达式 
+#### replace(char oldChar, char newChar) 
+	返回一个新的字符串，它是通过用 newChar 替换此字符串中出现的所有 oldChar 
+#### replace(CharSequence target, CharSequence replacement) 
+	使用指定的字面值替换序列 替换 此字符串所有匹配字面值目标序列的子字符串 
+#### replaceAll(String regex, String replacement) 
+	使用给定的 replacement 替换此字符串所有匹配给定的正则表达式的子字符串
+#### replaceFirst(String regex, String replacement) 
+	使用给定的 replacement 替换此字符串匹配给定的正则表达式的第一个子字符串 
+#### String[] split(String regex) 
+	根据给定正则表达式的匹配拆分此字符串 
+#### String[] split(String regex, int limit) 
+	根据匹配给定的正则表达式来拆分此字符串。 
+#### startsWith(String prefix) 
+	测试此字符串是否以指定的前缀开始。 
+#### startsWith(String prefix, int toffset) 
+	测试此字符串从指定索引开始的子字符串是否以指定前缀开始
+#### substring(int beginIndex) 
+	返回一个新的字符串，它是此字符串从beginIndex开始截取到最后一个子字符串
+#### substring(int beginIndex, int endIndex) 
+	返回一个新字符串，它是此字符串从begIndex截取到endIndex(不包含)的一个子字符串 
+#### toLowerCase() 
+	使用默认语言环境的规则将此 String 中的所有字符都转换为小写 
+#### toUpperCase() 
+	使用默认语言环境的规则将此 String 中的所有字符都转换为大写
+#### trim() 
+	返回字符串的副本，忽略前导空白和尾部空白 
 
-### replace
-replace(char oldChar, char newChar) 
+## StringBuilder
+### 面试题：String、StringBuffer、StringBuilder异同
+### String
+	不可变的字符序列;底层使用char[]存储
+### StringBuffer
+	可变的字符序列;底层使用char[]存储;线程安全的，效率低
+### StringBuilder
+	可变的字符序列;底层使用char[]存储;线程不安全的，效率高;jdk5.0新增
 
-	返回一个新的字符串，通过用 newChar 替换此字符串中出现的所有 oldChar 得到的
+### 扩容
+	扩容为原来容量的2倍 + 2,同时将原有数组中的元素复制到新的数组中。
+	开发中建议使用:StringBuffer 或 StringBuilder(int capacity)
+### 应用
+#### 增
+	append(xxx)
+#### 删
+	delete(int start,int end)
+#### 改
+	setCharAt(int n ,char ch) 
+	replace(int start, int end, String str)
+#### 查
+	charAt(int n)
+#### 插
+	insert(int offset, xxx)
+#### 长度
+	length()
+#### 遍历
+	for() + charAt() / toString()
 
-
-
-## JDK8前的date类
-
-## JDK8后的date类
+## 日期类
 ## 比较器
 ## System类
 ## Math类
