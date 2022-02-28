@@ -297,7 +297,8 @@ public class DeadLockTest {
 	字符串是常量,他们的值在创建后不能更改
 	String对象的字符内容是存储在一个字符数组value[]中
 	实现了Comparable接口，可以比较大小
-### 代码示例
+	不会存储相同内容的字符串
+### 示例代码
 ```java
 public final class String
     implements java.io.Serializable, Comparable<String>, CharSequence,
@@ -309,6 +310,22 @@ public final class String
 ### 内存图
 
 ![image-20220228095413233](E:\Typora\JavaSenior\image-20220228095413233.png)
+
+### 示例代码
+```java
+String s1 = "test";
+String s2 = new String("test");
+```
+### 内存图
+
+![image-20220228113215834](E:\Typora\JavaSenior\image-20220228113215834.png)
+
+
+### replace
+replace(char oldChar, char newChar) 
+
+	返回一个新的字符串，通过用 newChar 替换此字符串中出现的所有 oldChar 得到的
+
 
 
 ## JDK8前的date类
