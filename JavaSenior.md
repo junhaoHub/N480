@@ -60,8 +60,10 @@ class MyThread2 implements Runnable{
 	俗称锁.任何一个类的锁都可以充当锁
 ### 规则
 	多个线程必须共用同一把锁
-	优点:使用同步的方式,解决了线程的安全问题.
-	缺点：操作同步代码时,只能有一个线程参与,相当于是一个单线程的过程,效率低下
+### 优点
+	使用同步的方式,解决了线程的安全问题.
+### 缺点	
+	操作同步代码时,只能有一个线程参与,相当于是一个单线程的过程,效率低下
 
 ## 实际场景
 	当某个线程操作车票的过程中,尚未操作完成时,其他线程参与进来,也操作车票.
@@ -130,7 +132,7 @@ class Window implements Runnable{
 
 #### Lock锁
 
-	使用Lock锁，JVM将花费更少的时间来调度线程，性能更好。并且具有更有的扩展性（提供更多的子类）
+	JVM将花费更少的时间来调度线程，性能更好。并且具有更好的扩展性（提供更多的子类）
 
 ##### 代码示例
 ```java
@@ -285,8 +287,36 @@ public class DeadLockTest {
 ## 面试题:线程池的好处
 	提高响应速度(减少了创建新线程的时间)
 	降低资源消耗(重复利用线程池中线程,不需要每次都创建)	
-	便于线程管理           
+	便于线程管理       
+
+# 常用类
+## String类
+字符串，所有java中的字符串字面值都作为此类的实例实现
+### 特性
+	String是一个final类,代表不可变的字符序列,不可被继承
+	字符串是常量,他们的值在创建后不能更改
+	String对象的字符内容是存储在一个字符数组value[]中
+	实现了Comparable接口，可以比较大小
+### 代码示例
+```java
+public final class String
+    implements java.io.Serializable, Comparable<String>, CharSequence,
+               Constable, ConstantDesc {
+    @Stable
+    private final byte[] value;
+```
+
+### 内存图
+
+![image-20220228095413233](E:\Typora\JavaSenior\image-20220228095413233.png)
 
 
-​        
+## JDK8前的date类
+
+## JDK8后的date类
+## 比较器
+## System类
+## Math类
+## BigInteger
+## BigDecimal
 
