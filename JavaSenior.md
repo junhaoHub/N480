@@ -422,13 +422,13 @@ String s2 = new String("test");
 #### getTime()
 	获取当前Date对象对应的毫秒数.（1646119086096）
 
-#### 将毫秒数打印出年月日
+#### 使用多态将 java.sql.Date 打印出年月日
 ```java
 java.sql.Date date1 = new java.sql.Date(89123556768L);
 System.out.println(date1);
 ```
 
-### 将java.util.Date对象转换为java.sql.Date对象
+### java.util.Date转换为java.sql.Date
 ```java
 //情况一:
 Date date4 = new java.sql.Date(1234123123L);
@@ -439,8 +439,48 @@ java.sql.Date date7 = (java.sql.Date)date4;
 Date date6 = new Date();
 java.sql.Date date7 = new java.sql.Date(date6.getTime());
 ```
-
 ## 比较器
+	集合存储的元素的特性，如果元素是可比较的则可以进行相应的排序，否则不行
+## 为什么使用比较器
+	Java中的对象，正常情况下，只能进行比较: ==  或 != 。不能使用 > 或 < 的
+	但是在开发场景中，我们需要对多个对象进行排序，言外之意，就需要比较对象的大小
+
+## 应用
+###  sort( ) 
+	对指定的 类型 数组按数字升序进行排序。
+
+###  自然排序
+java.lang.Comparable
+
+
+###  定制排序
+java.util.Comparator
+
+	当元素的类型没有实现Comparable接口而又不方便修改代码,那么可以考虑使用Comparator 的对象来排序
+### 示例代码
+```java
+//指明商品比较大小的方式
+@Override
+public int compareTo(Object o) {
+        if (o instanceof Goods) {
+            Goods goods = (Goods) o;
+            if (this.price > goods.price) {
+                return 1;
+            } else if (this.price < goods.price) {
+                return -1;
+            } else {
+                return Double.compare(this.price, goods.price);
+            }
+
+        }
+        return 0;
+}
+```
+
+
+
+
+
 ## System类
 ## Math类
 ## BigInteger
