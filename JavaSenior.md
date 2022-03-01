@@ -410,6 +410,36 @@ String s2 = new String("test");
 	for() + charAt() / toString()
 
 ## 日期类
+### java.sql.Date
+	对应着数据库中的日期类型的变量,java.sql.Date只是精确到某一天
+### java.util.Date
+	存入的数据精确到每天的具体的某个时间段
+
+### 应用
+#### toString()
+	显示当前的年、月、日、时、分、秒（Tue Mar 01 15:18:06 CST 2022）
+
+#### getTime()
+	获取当前Date对象对应的毫秒数.（1646119086096）
+
+#### 将毫秒数打印出年月日
+```java
+java.sql.Date date1 = new java.sql.Date(89123556768L);
+System.out.println(date1);
+```
+
+### 将java.util.Date对象转换为java.sql.Date对象
+```java
+//情况一:
+Date date4 = new java.sql.Date(1234123123L);
+java.sql.Date date7 = (java.sql.Date)date4;
+```
+```java
+//情况二:
+Date date6 = new Date();
+java.sql.Date date7 = new java.sql.Date(date6.getTime());
+```
+
 ## 比较器
 ## System类
 ## Math类
