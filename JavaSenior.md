@@ -441,22 +441,16 @@ java.sql.Date date7 = new java.sql.Date(date6.getTime());
 ```
 ## 比较器
 	集合存储的元素的特性，如果元素是可比较的则可以进行相应的排序，否则不行
-## 为什么使用比较器
+### 优点
 	Java中的对象，正常情况下，只能进行比较: ==  或 != 。不能使用 > 或 < 的
 	但是在开发场景中，我们需要对多个对象进行排序，言外之意，就需要比较对象的大小
 
 ## 应用
-###  sort( ) 
-	对指定的 类型 数组按数字升序进行排序。
+###  sort() 
+	对指定的 类型 数组按字母升序进行排序。
 
 ###  自然排序
 java.lang.Comparable
-
-
-###  定制排序
-java.util.Comparator
-
-	当元素的类型没有实现Comparable接口而又不方便修改代码,那么可以考虑使用Comparator 的对象来排序
 ### 示例代码
 ```java
 //指明商品比较大小的方式
@@ -471,18 +465,111 @@ public int compareTo(Object o) {
             } else {
                 return Double.compare(this.price, goods.price);
             }
-
         }
         return 0;
 }
 ```
 
 
+###  定制排序
+java.util.Comparator
 
+	当元素的类型没有实现 Comparable 接口而又不方便修改代码,那么可以考虑使用 Comparator 的对象来排序
+### 示例代码
+```java
+@Test
+public void test3(){
+      String[] arr = new String[]{"AA","CC","KK","MM","GG","JJ","DD"};
+      Arrays.sort(arr,new Comparator(){
 
+            //按照字符串从大到小的顺序排列
+            @Override
+            public int compare(Object o1, Object o2) {
+                if(o1 instanceof String && o2 instanceof  String){
+                    String s1 = (String) o1;
+                    String s2 = (String) o2;
+                    return -s1.compareTo(s2);
+                }
+//                return 0;
+                throw new RuntimeException("输入的数据类型不一致");
+            }
+        });
+        System.out.println(Arrays.toString(arr));
+    }
 
-## System类
-## Math类
+```
+
+## 系统类
+
+### 方法
+#### currentTimeMillis() 
+	返回以毫秒为单位的当前时间
+#### exit(int status) 
+	终止当前正在运行的 Java 虚拟机，非0的状态码表示异常终止
+#### gc() 
+	运行垃圾回收器
+### getProperties(String key) 
+	获取指定键指示的系统属性
+### 代码示例
+```java
+@Test
+public void test1() {
+        String javaVersion = System.getProperty("java.version");
+        System.out.println("java的version:" + javaVersion);
+
+        String javaHome = System.getProperty("java.home");
+        System.out.println("java的home:" + javaHome);
+
+        String osName = System.getProperty("os.name");
+        System.out.println("os的name:" + osName);
+
+        String osVersion = System.getProperty("os.version");
+        System.out.println("os的version:" + osVersion);
+
+        String userName = System.getProperty("user.name");
+        System.out.println("user的name:" + userName);
+
+        String userHome = System.getProperty("user.home");
+        System.out.println("user的home:" + userHome);
+
+        String userDir = System.getProperty("user.dir");
+        System.out.println("user的dir:" + userDir);
+
+}
+```
+
+## 数学类
+java.lang.Math提供了一系列静态方法用于科学计算。其方法的参数和返回值类型为double型
+### abs
+	绝对值
+### acos,asin,atan,cos,sin,tan
+	三角函数
+### sqart
+	平方根
+### pow(double a,doble b)
+	a的b次幂
+### log
+	自然对数
+### exp
+	e为底指数
+### random()
+	返回0.0到1.0的随机数
+### long round(double a)
+	double型数据a转换为long型（四舍五入）
+### toDegrees(double angrad)
+	弧度--》角度
+### toRadians(double angdeg)
+	角度——》弧度
 ## BigInteger
+	不可变的任意精度的整数
 ## BigDecimal
-
+	精度比较高的浮点型数字
+### 代码示例
+```java
+BigInteger bi = new BigInteger("1243324112234324324325235245346567657653");
+BigDecimal bd = new BigDecimal("12435.351");
+	BigDecimal bd2 = new BigDecimal("11");
+	System.out.println(bi);
+	System.out.println(bd.divide(bd2, BigDecimal.ROUND_HALF_UP));
+	System.out.println(bd.divide(bd2, 25, BigDecimal.ROUND_HALF_UP));
+```
