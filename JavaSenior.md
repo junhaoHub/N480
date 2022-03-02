@@ -562,14 +562,18 @@ java.lang.Math提供了一系列静态方法用于科学计算。其方法的参
 	角度——》弧度
 ## BigInteger
 	不可变的任意精度的整数
-## BigDecimal
-	精度比较高的浮点型数字
 ### 代码示例
 ```java
-BigInteger bi = new BigInteger("1243324112234324324325235245346567657653");
+BigInteger bi = new BigInteger(); 			 			 BigInteger("1243324112234324324325235245346567657653");
+System.out.println(bi);
+```
+## BigDecimal
+	精度比较高的浮点型数字
+
+### 代码示例
+```java
 BigDecimal bd = new BigDecimal("12435.351");
-	BigDecimal bd2 = new BigDecimal("11");
-	System.out.println(bi);
-	System.out.println(bd.divide(bd2, BigDecimal.ROUND_HALF_UP));
-	System.out.println(bd.divide(bd2, 25, BigDecimal.ROUND_HALF_UP));
+BigDecimal bd2 = new BigDecimal("11");
+System.out.println(bd.divide(bd2, BigDecimal.ROUND_HALF_UP));
+System.out.println(bd.divide(bd2, 25, BigDecimal.ROUND_HALF_UP));
 ```
