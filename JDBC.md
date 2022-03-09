@@ -241,17 +241,56 @@ Data Access Object 访问数据信息的类和接口，包括堆数据的CRUD(Re
 	数据库在初始化时将创建一定数量的数据库连接放到连接池中，这些数据库连接的数量是由最小数据库的连接数来决定的。无论这些数据库连接是否被使用，连接池都将保持这些数量连接池的最大数据库连接数量限定了这个连接池中占有的最大连接数，当应用程序向连接池请求的连接数超过最大数量时，这些请求将被加入到等待队列中
 
 ## 开源的数据库连接
+
 	DBCP --> Apache Inc. 速度快、不稳定 tomcat自带的服务器
 	C3P0 --> 速度慢、稳定性好 开源组织提供的,hibernate服务器推荐
 	proxool --> 稳定性较C3P0差,有监控连接池状态的功能
 	BoneCP --> 速度快，开源组织提供的,
 	重：Druid --> 集DBCP、C3P0、Proxool优点于一身，但不确定速度是否比BoneCP快
 
-## 
+## DBCP常用配置
+
+| 配置                       | 默认  | 说明                                                         |
+| -------------------------- | ----- | ------------------------------------------------------------ |
+| initialSize                | 0     | 连接池启动时创建的初始化连接数量                             |
+| maxActive                  | 8     | 连接池中可同时连接的最大的连接数（高峰单机器在20并发左右）   |
+| maxIdle                    | 8     | 连接池中最大的空闲的连接数，超过的空闲连接将被释放，如果设置为负数表示不限制 |
+| minIdle                    | 0     | 连接池中最小的空闲的连接数，低于这个数量会被创建新的连接     |
+| maxWait                    | 无限  | 最大等待时间，当没有可用连接时，连接池等待连接释放的最大时间 |
+| maxOpenPreparedStatements  | 无限  | 开启池的prepared 后的同时最大连接数                          |
+| minEvictableIdleTimeMillis |       | 连接池中连接，在时间段内一直空闲，被逐出连接池的时间         |
+| removeAbandonedTimeout     | 300   | 超过时间限制，回收没有用(废弃)的连接                         |
+| removeAbandoned            | false | 超过回收时间后，是否进行没用连接（废弃）的回收               |
 
 
+## Druid（德鲁伊）常用配置
+| **配置**                      | **缺省** | **说明**                                                     |
+| ----------------------------- | -------- | ------------------------------------------------------------ |
+| name                          |          | 如果存在多个数据源，监控的时候可以通过名字来区分开来。       |
+| url                           |          | 连接数据库的url，不同数据库不一样                            |
+| username                      |          | 连接数据库的用户名                                           |
+| password                      |          | 连接数据库的密码。                                           |
+| driverClassName               |          | 根据url自动识别   这一项可配可不配                           |
+| initialSize                   | 0        | 初始化时建立物理连接的个数                                   |
+| maxActive                     | 8        | 最大连接池数量                                               |
+| maxIdle                       | 8        | 已经不再使用，配置了也没效果                                 |
+| minIdle                       |          | 最小连接池数量                                               |
+| maxWait                       |          | 获取连接时最大等待时间，单位毫秒。                           |
+| poolPreparedStatements        | false    | 是否缓存preparedStatement，也就是PSCache。                   |
+| maxOpenPreparedStatements     | -1       | 要启用PSCache，必须配置大于0                                 |
+| validationQuery               |          | 用来检测连接是否有效的sql，要求是一个查询语句。              |
+| testOnBorrow                  | true     | 申请连接时执行validationQuery检测连接是否有效                |
+| testOnReturn                  | false    | 归还连接时执行validationQuery检测连接是否有效                |
+| testWhileIdle                 | false    | 申请连接的时候检测                                           |
+| timeBetweenEvictionRunsMillis |          | Destroy线程会检测连接的间隔时间                              |
+| numTestsPerEvictionRun        |          | 不再使用，一个DruidDataSource只支持一个EvictionRun           |
+| minEvictableIdleTimeMillis    |          |                                                              |
+| connectionInitSqls            |          | 物理连接初始化的时候执行的sql                                |
+| exceptionSorter               |          | 当数据库抛出一些不可恢复的异常时，抛弃连接                   |
+| filters                       |          | 监控用的filter:stat日志用的filter:log4j防御sql注入的filter:wall |
+| proxyFilters                  |          | 类型是List，如果同时配置了filters和proxyFilters              |
 
 
-
-
+# Apache—DBUtils
+封装PreparedStatement实现CRUD操作，极大简化jdbc编码的工作量，不会影响程序的性能的性能
 
