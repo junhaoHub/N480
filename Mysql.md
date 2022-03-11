@@ -97,11 +97,32 @@ grant select,insert,delete,update on [TABLENAME].* to junhao@localhost identifie
 ![img](E:\Typora\Mysql\C0548F7E902ED4E16CA1F94EDA32D216.png)
 
 ## 最左前缀优化原则
+	mysql会一直向右匹配直到遇到范围查询（>、<、between、like）就停止匹配,开始在这个范围进行update、select.比如a=3 and b=4 and c>5 and d=6 如果建立（a、b、c、d）顺序的索引,d是用不到索引的，如果建立(a、b、d、c)的索引则都可以用到,a、b、d的顺序可以任意调整。
 
 
-
+	=和in可以乱序，比如a=1 and b=2 and c=3建立（a、b、c）索引可以任意顺序，mysql的查询优化器会帮你优化成索引可以识别的形式
 
 # Explain
+可以模拟优化器执行SQL语句，分析你的查询语句或是结构的性能瓶颈
+
+## 代码示例
+```mysql
+explain extended select * from film where id =1;
+```
+
+![image-20220311092448307](E:\Typora\Mysql\image-20220311092448307.png)
+
+## extended
+	explain 的extended 扩展能够在原本explain的基础上额外的提供一些查询优化的信息,这些信息可以通过MySQL的show warnings命令得到.
+
+## const
+
+	直接按主键或唯一键读取,通常情况下,如果将一个主键放置到 where 后面作为条件查询,mysql 优化器就能把这次查询优化转化为一个常量.
+
+# B+树底层分析
+
+
+
 # 一条SQL是如何执行的
 # 常见索引优化
 # 锁
