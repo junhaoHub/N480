@@ -113,7 +113,25 @@ explain extended select * from film where id =1;
 ![image-20220311092448307](E:\Typora\Mysql\image-20220311092448307.png)
 
 ## extended
-	explain 的extended 扩展能够在原本explain的基础上额外的提供一些查询优化的信息,这些信息可以通过MySQL的show warnings命令得到.
+	explain 的 extended 扩展能够在原本explain的基础上额外的提供一些查询优化的信息,这些信息可以通过MySQL的show warnings命令得到.
+
+## Id列
+	有几个select就有几个id，并且id的顺序是按select出现的顺序增长的
+	id越大执行优先级就越高，id相同则从上往下执行，id为NULL最后执行
+
+## select_type列
+对应行是简单还是复杂的查询
+### simple
+	简单查询。查询不包含子查询和union
+### primary
+	复杂查询中最外层的select
+### subquery
+	在select后的子查询（不在from字句中）
+### derived
+	在from字句后的子查询。Mysql会将结果存放在一个临时表中，也称为派生类(derive)
+
+## table列
+	查询的语句所关联的表
 
 ## const
 
@@ -125,6 +143,26 @@ explain extended select * from film where id =1;
 
 # 一条SQL是如何执行的
 # 常见索引优化
+```mysql
+SHOW VARIABLES LIKE '%query%'
+	看慢查询日志
+slow_query_log
+	默认是off关闭的,用时,要改为on打开
+slow_query_log_file
+	记录的是慢日志的记录文件
+long_query_time
+	默认是10S,次执行的sql达到这个时长,会被记录
+SHOW STATUS LIKE '%slow. _queries%'
+	查看慢查询状态
+Slow_queries
+	记录的是慢查询数量,当有一条sq|执行一次比较慢时,这个value就是1
+
+SET GLOBAL slow_query.log = ON
+	打开慢查询
+SET GLOBAL long_query.time = 1
+	将默认时间改为1s
+```
+
 # 锁
 # 事务隔离级别
 每个数据库连接都有一个全局变量@@tx_isolation,表示当前的事务隔离级别
