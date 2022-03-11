@@ -25,7 +25,7 @@ grant select,insert,delete,update on [TABLENAME].* to junhao@localhost identifie
 ### 优点
 	红黑树能够以O(log2(N))的时间复杂度进行搜索、插入、删除操作。此外,任何不平衡都会在3次旋转之内解决。
 ### 缺点
-	在面对数据量庞大的数据时，无法判断其层数，会造成大量的IO
+	在面对数据量庞大的数据时,无法判断其层数,会造成大量的IO
 
 ## Hash
 
@@ -41,7 +41,7 @@ grant select,insert,delete,update on [TABLENAME].* to junhao@localhost identifie
 
 ![image-20220310113034625](E:\Typora\Mysql\image-20220310113034625.png)
 
-	叶节点具有相同的深度，叶节点的指针为空
+	叶节点具有相同的深度,叶节点的指针为空
 	所有索引元素不重复
 	节点中的数据索引从左到右递增排列
 
@@ -49,18 +49,53 @@ grant select,insert,delete,update on [TABLENAME].* to junhao@localhost identifie
 
 ![image-20220310113105322](E:\Typora\Mysql\image-20220310113105322.png)
 
-	根节点不存储data，只存储索引（冗余），可以增加更多的索引
+	根节点不存储data,只存储索引（冗余）,可以增加更多的索引
 	叶子节点包含所有的索引字段
-	叶子节点用指针连接，提高区间访问的性能
+	叶子节点用指针连接,提高区间访问的性能
 
 ## 面试题：如何用B+树快速查找
 
+## Myisam结构
+
+![image-20220310180557883](E:\Typora\Mysql\image-20220310180557883.png)
+
+### .frm
+	数据库存的表的结构
+
+### .MYD
+	数据库表中存的数据
+
+### .MYI
+	数据库表的索引文件
+
+## InnoDB文件结构
+
+![image-20220310191345114](E:\Typora\Mysql\image-20220310191345114.png)
+
+### .frm
+	数据库存的表的结构
+### .ibd
+	数据库的表数据文件，是按照B+树组织的一个索引结构文件
+
+![image-20220310193253048](E:\Typora\Mysql\image-20220310193253048.png)
+
 ## 聚集索引
-## 聚簇索引
+	叶子节点包含了完整的数据结构
+
+![image-20220310203704882](E:\Typora\Mysql\image-20220310203704882.png)
+
 ## 稀疏索引
 
+	MyISAM索引文件和数据文件是分离的（非聚集）
+
+![image-20220310204158998](E:\Typora\Mysql\image-20220310204158998.png)
+
 ## 面试题：为什么推荐用自增主键做索引
+
 ## 联合索引
+
+![img](E:\Typora\Mysql\C0548F7E902ED4E16CA1F94EDA32D216.png)
+
 ## 最左前缀优化原则
 
 
