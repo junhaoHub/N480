@@ -103,7 +103,7 @@ grant select,insert,delete,update on [TABLENAME].* to junhao@localhost identifie
 
 # Explain
 # 一条SQL是如何执行的
-# 索引优化
+# 常见索引优化
 # 锁
 # 事务隔离级别
 每个数据库连接都有一个全局变量@@tx_isolation,表示当前的事务隔离级别
