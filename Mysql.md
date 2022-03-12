@@ -1,20 +1,22 @@
 
 
-# 创建用户
+## 使用root创建用户
 ```mysql
 create user junhao identified by '123456';
 ```
 
 ## 授予权限
 ```mysql
-#授予通过网络方式登录的junhao,对所有库所有表的权限
-grant all privileges on *.* to junhao@'%' identified by '123456';
-
-#给junhao用户使用本地命令行方式，授予某个库下的所有表的增删改查的权限
 grant select,insert,delete,update on [TABLENAME].* to junhao@localhost identified by '123456';
 ```
 # 索引
 利用数据结构，将数据排好序，以帮助Mysql高效获取
+
+	从存储结构划分 B Tree索引、Hash索引、FULLTEXT全文索引、R Tree索引
+	从应用层次划分 普通索引、唯一索引、主键索引、复合索引
+	从索引键值类型划分 主键索引、辅助索引（二级索引）
+	从数据存储和索引键值逻辑关系划分 聚集索引（聚簇索引）、非聚集索引（非聚簇索引）
+
 
 ## 二叉树
 
@@ -22,10 +24,9 @@ grant select,insert,delete,update on [TABLENAME].* to junhao@localhost identifie
 
 ## 红黑树
 自平衡二叉查找树，是在计算机科学中用到的一种数据结构，典型的用途是实现关联数组
-### 优点
-	红黑树能够以O(log2(N))的时间复杂度进行搜索、插入、删除操作。此外,任何不平衡都会在3次旋转之内解决。
-### 缺点
-	在面对数据量庞大的数据时,无法判断其层数,会造成大量的IO
+
+	优点-红黑树能够以O(log2(N))的时间复杂度进行搜索、插入、删除操作。此外,任何不平衡都会在3次旋转之内解决。
+	缺点-在面对数据量庞大的数据时,无法判断其层数,会造成大量的IO
 
 ## Hash
 
@@ -105,43 +106,58 @@ grant select,insert,delete,update on [TABLENAME].* to junhao@localhost identifie
 # Explain
 可以模拟优化器执行SQL语句，分析你的查询语句或是结构的性能瓶颈
 
-## 代码示例
 ```mysql
 explain extended select * from film where id =1;
 ```
 
 ![image-20220311092448307](E:\Typora\Mysql\image-20220311092448307.png)
 
-## extended
-	explain 的 extended 扩展能够在原本explain的基础上额外的提供一些查询优化的信息,这些信息可以通过MySQL的show warnings命令得到.
+## id
+	有几个select就有几个id,并且id的顺序是按select出现的顺序增长的
+	id越大执行优先级就越高,id相同则从上往下执行,id为NULL最后执行
 
-## Id列
-	有几个select就有几个id，并且id的顺序是按select出现的顺序增长的
-	id越大执行优先级就越高，id相同则从上往下执行，id为NULL最后执行
-
-## select_type列
+## select_type
 对应行是简单还是复杂的查询
-### simple
-	简单查询。查询不包含子查询和union
-### primary
-	复杂查询中最外层的select
-### subquery
-	在select后的子查询（不在from字句中）
-### derived
-	在from字句后的子查询。Mysql会将结果存放在一个临时表中，也称为派生类(derive)
 
-## table列
+	simple_简单查询,查询不包含子查询和union
+	primary_复杂查询中最外层的select
+	subquery_在select后的子查询（不在from字句中）
+	derived_在from字句后的子查询。Mysql会将结果存放在一个临时表中，也称为派生类
+
+## table
 	查询的语句所关联的表
 
-## type列
-	这一列表示Mysql决定如何查找表中的行，查找数据行记录的大概范围,依次从优到差分别是
-
+## type
+这一列表示Mysql决定如何查找表中的行，查找数据行记录的大概范围,依次从优到差分别是
 
 	system>const>eq_ref>ref>range>index>ALL
+	
+	index-扫描全索引就能拿到结果,一般是扫描某个二级索引
+	ALL-全表扫描,扫描你的聚集索引的所有叶子节点
 
-## const
 
-	直接按主键或唯一键读取,通常情况下,如果将一个主键放置到 where 后面作为条件查询,mysql 优化器就能把这次查询优化转化为一个常量.
+## key_len
+用到的索引长度，当用and关键字时，索引长度会随着条件而叠加
+![image-20220312092841677](E:\Typora\Mysql\image-20220312092841677.png)
+
+### 计算规则
+
+	char(n)-n字节长度
+	varchar-如果是ntf-8，则长度是3n+2字节，加的2字节用来存储字符串长度,n是varchar自定义的长度
+	tinyint-1字节
+	smallint-2字节
+	int-4字节
+	bigint-8字节
+	date-3字节
+	timestamp-4字节
+	datetime-8字节
+	如果字段允许为NULL,还需要一个字节记录是否为NULL
+
+## ref
+
+	按主键或唯一键读取,将一个主键放到 where 后面作为条件查询,优化器就能把这次查询优化转化为一个常量(const)
+
+
 
 # B+树底层分析
 
