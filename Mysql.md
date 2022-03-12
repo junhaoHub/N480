@@ -12,10 +12,10 @@ grant select,insert,delete,update on [TABLENAME].* to junhao@localhost identifie
 # 索引
 利用数据结构，将数据排好序，以帮助Mysql高效获取
 
-	从存储结构划分 B Tree索引、Hash索引、FULLTEXT全文索引、R Tree索引
-	从应用层次划分 普通索引、唯一索引、主键索引、复合索引
-	从索引键值类型划分 主键索引、辅助索引（二级索引）
-	从数据存储和索引键值逻辑关系划分 聚集索引（聚簇索引）、非聚集索引（非聚簇索引）
+	从存储结构划分 —— B Tree索引、Hash索引、FULLTEXT全文索引、R Tree索引
+	从应用层次划分 —— 普通索引、唯一索引、主键索引、复合索引
+	从索引键值类型划分 —— 主键索引、辅助索引（二级索引）
+	从数据存储和索引键值逻辑关系划分 —— 聚集索引（聚簇索引）、非聚集索引（非聚簇索引）
 
 
 ## 二叉树
@@ -131,7 +131,6 @@ explain extended select * from film where id =1;
 这一列表示Mysql决定如何查找表中的行，查找数据行记录的大概范围,依次从优到差分别是
 
 	system>const>eq_ref>ref>range>index>ALL
-	
 	index-扫描全索引就能拿到结果,一般是扫描某个二级索引
 	ALL-全表扫描,扫描你的聚集索引的所有叶子节点
 
@@ -156,6 +155,34 @@ explain extended select * from film where id =1;
 ## ref
 
 	按主键或唯一键读取,将一个主键放到 where 后面作为条件查询,优化器就能把这次查询优化转化为一个常量(const)
+
+## 面试题：mysql在什么时会选择使用全表索引
+	在使用不等于（!=或者<>）的时候
+	当范围查询的效率没有全表查询的效率高时
+	is null,is not null
+	like以通配符开头('$abc...')('%abc...')
+	少用or或in，用它查询时，mysql不一定使用索引
+
+## 索引使用总结
+假设index(a、b、c)
+
+| Where语句                                        | 索引是否被使用                        |
+| ------------------------------------------------ | ------------------------------------- |
+| where a= 3                                       | Y，使用到a                            |
+| where a=3 and b=5                                | Y，使用到a，b                         |
+| where a= 3 and b=5 and c=4                       | Y， 使用到a,  b,  c                   |
+| where b=3 或者 where b=3 and c=4  或者 where c=4 | N                                     |
+| where a=3 and c=5                                | 使用到a，但是c不可以， b中间断了      |
+| where a=3 and b>4 and c=5                        | 使用到a和b，c不能用在范围之后， b断了 |
+| where a=3 and b like 'kk%' and c= 4              | Y,  使用到a, b, c                     |
+| where a=3 and b like '%kk' and  c=4              | Y,  只用到a                           |
+| wherea=3 and b like '%kk%' and c=4               | Y, 只用到a                            |
+| wherea=3 and b like 'k%kk%' andc=4               | Y,使用到a,b,c                         |
+
+
+
+	like KK%相当于=常量,%KK和%KK%相当于范围
+
 
 
 
