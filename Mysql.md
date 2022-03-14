@@ -378,7 +378,27 @@ SET GLOBAL long_query.time = 1
 
 	where与order by冲突时优先where,一般这种时候往往都是让where条件去使用索引来快速筛选出来一部分指定的数据,接着再进行排序。因为大多数情况基于索引进行where筛选往往可以最快速度筛选出你要的少部分数据，然后做排序的成本可能会小很多。
 
+## 分页查询优化
+当数据非常大的情况下，如何优化
 
+### 根据主键排序的
+```mysql
+# 优化前
+select * from employees limit 90000,5;
+# 优化后，改写后的SQL走了索引，条件:需要主键连续，主键不能够被删除或增加
+select * from employees where id > 90000 limit 5;
+
+```
+### 根据主键排序优化后
+
+
+
+
+
+## JOIN
+## COUNT
+## MYSQL规范
+## 数据类型选择
 
 
 
