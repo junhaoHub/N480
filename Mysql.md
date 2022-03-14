@@ -387,15 +387,16 @@ SET GLOBAL long_query.time = 1
 select * from employees limit 90000,5;
 # 优化后，改写后的SQL走了索引，条件:需要主键连续，主键不能够被删除或增加
 select * from employees where id > 90000 limit 5;
-
 ```
-### 根据主键排序优化后
+### 根据主键排序的优化后在优化
+```mysql
+Explain select * from employees e inner join(select id from employees order by name limit 90000,5) ed on e.id =e.id
+```
 
-
-
-
+![image-20220314114452997](E:\Typora\Mysql\image-20220314114452997.png)
 
 ## JOIN
+
 ## COUNT
 ## MYSQL规范
 ## 数据类型选择
