@@ -1,4 +1,7 @@
+
+
 # 权限
+
 ## 使用root创建用户
 ```mysql
 create user junhao identified by '123456';
@@ -388,6 +391,26 @@ select * from employees limit 90000,5;
 # 优化后，改写后的SQL走了索引，条件:需要主键连续，主键不能够被删除或增加
 select * from employees where id > 90000 limit 5;
 ```
+
+
+## JOIN
+### 嵌套循环连接 Nested-Loop Join(NLJ)
+```mysql
+Explain select * from t1 inner join t2 on t1.a = t2.a
+```
+
+![image-20220314152159618](E:\Typora\Mysql\image-20220314152159618.png)
+
+	t1 10000rows,t2 100rows.先从t2表拿1row记录,再去t1表联合查询一次,因为t1表是索引,在索引树上搜索,最多搜索3次,就扫到了叶子结点,拿出来数据的时候遍历了一次,t2总共一百次联合查询t1,因为t1走了索引,故查询了100(t2)+100(t1)=200行.
+
+#### 对于关联sql的优化
+	关联字段加索引，让mysql做join操作时尽量选择NLJ算法
+	小表驱动大表，如果明确知道那张表是小表，可以用straight_join固定连接驱动方式
+```mysql
+#mysql选择t2作为驱动表
+select * from t2 straight_join t1 on t2.a;
+```
+
 ### 根据主键排序的优化后在优化
 ```mysql
 Explain select * from employees e inner join(select id from employees order by name limit 90000,5) ed on e.id =e.id
@@ -395,9 +418,58 @@ Explain select * from employees e inner join(select id from employees order by n
 
 ![image-20220314114452997](E:\Typora\Mysql\image-20220314114452997.png)
 
-## JOIN
+	id=2的优先级较高,先执行,使用索引查找出5条数据,在对其使用笛卡尔积进行联合索引,不用担心主键不是自增长
+
+### 块的嵌套循环连接 Block Nested-Loop Join(BNL)
+```mysql
+EXPLAIN select * from t1 inner join t2 on t1.b = t2.b;
+```
+#### 流程
+	把t2的所有数据放入到join_buffer
+	把表t1中每一行取出来,跟join_buffer中的数据做对比
+	返回满足join条件的数据
+#### 原理
+	扫描总行数为10000(表t1的数据总量)+100(表t2的数据总量)=10100
+	内存判断次数 100*10000=100,0000次
+#### 规则
+	当t2是一个大表,join_buffer放不下,可以选择调整join_buffer_size,亦或者分段放.
+	假如,t2表有1600条数据,join buffer一次只能放800行记录,然后从t1表里取数据跟join_buffer中数据做对比得到部分结果,然后清空join_buffer,再放入剩余的800条记录,再次从t1表里取数据跟join_buffer中数据对比得到结果
+
+### 面试题:如何选择BNL或NLJ
+	如果使用上面第二条sql使用NLJ,那么扫描次数为100万次,这个是磁盘扫描.相对于磁盘扫描,BNL的内存计算会快很多.
+	而对于有索引的算法,则可以优先考虑NLJ.
+
+## in
+当B表的数据集小于A表时，in优先于exists
+```mysql
+select * from A where id in (select id from B)
+
+#等价于
+for(select id  from B ){
+	select * from A where A.id = B.id
+	}
+```
+
+## exsits
+当B表的数据集大于A表时，exists优先于in
+```mysql
+select * from A where exists (select 1 from B where B.id = A.id)
+
+#等价于
+	for(select * from A ){
+		select 1 from B where B.id = A.id
+	}
+```
+	EXISTS(subquery)只返回TRUE或FALSE、因此子查询中的select * 也可以用select 1代替,官方说法是实际执行时会忽略SELECT清单,因此没有区别
+	EXISTS子查询往往也可以用JOIN来代替
 
 ## COUNT
+```mysql
+#临时关闭mysql查询优化，为了查看sql多次执行的真实时间
+
+
+```
+
 ## MYSQL规范
 ## 数据类型选择
 
