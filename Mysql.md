@@ -466,15 +466,36 @@ select * from A where exists (select 1 from B where B.id = A.id)
 ## COUNT
 ```mysql
 #临时关闭mysql查询优化，为了查看sql多次执行的真实时间
+set global query_cache_size=0;
+set global query_cache_type=0;
 
-
+Explain select count(1) from employees;
+Explain select count(id) from employees;
+Explain select count(name) from employees;
+Explain select count(*) from employees;
+```
+### 有索引效率
+	count(*)≈count(1)>count(字段)>count(主键 id)
+	字段有索引,count（字段）走二级索引，存储数据比主键索引少，所以count（字段）>id
+### 无索引效率
+	count(*)≈count(1)>count(主键 id)>count(字段)
+	字段没有索引,count（字段）走不了二级索引，所以count（字段）<id
+### 常用优化方法
+#### 查询mysql自己维护的总行数
+```mysql
+#对于myisam存储引擎的表做不带where条件的count查询性能是很高的,因为myisam存储引擎的表的总行数会被存储在硬盘上,查询不需要计算
+EXPLAIN select count(*) from test_myisam;
+#而对于innodb存储引擎的表mysql不会存储表的总记录行数（因为有MVCC机制）,查询count需要实时计算
 ```
 
-## MYSQL规范
-## 数据类型选择
-
-
-
+#### 只查询表总行数
+```mysql
+show tables status like 'employees';
+```
+#### 将总数维护到Redis里
+	插入或删除表数据行的时候同时维护redis里表总行数key的计数值（用incr或decr命令）
+#### 增加数据库计数表
+	插入或删除表数据行的时候同时维护计数表，让他们在同一个事务里操作
 
 
 # 锁
