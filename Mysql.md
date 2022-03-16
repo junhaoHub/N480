@@ -498,8 +498,47 @@ show tables status like 'employees';
 	插入或删除表数据行的时候同时维护计数表，让他们在同一个事务里操作
 
 
-# 锁
-# 事务隔离级别
+# 锁机制
+将复杂的的多表连接交给java，单表交给mysql，它的空间很宝贵
+
+## 分类
+### 性能
+	乐观锁用版本号去比对来实现锁,性能较好
+```mysql
+select * from t1 where version =1; 
+```
+	悲观锁,性能较差
+### 操作类型
+	读锁 和 写锁 都属于悲观锁
+	读锁（共享锁，S（Shared））:针对同一份数据，多个读操作可以同时进行而不会互相影响
+	写锁（排他锁，X（eXcusive））:当前写操作没有完成前，它会阻断其他写锁和读锁
+### 操作粒度
+#### 行锁
+	开销大，加锁慢，会出现死锁;锁定粒度大,并发度高，锁冲突的概率最低，并发度最高。
+	读锁会阻塞写，但是不会阻塞读。而写锁则会把读和写都阻塞。
+
+
+#### 表锁
+```mysql
+#手动增加表锁
+lock table 表名称 read(write),表名称2 read(write)
+#查看表上加过的锁
+show open tables;
+#删除表锁
+unlock tables;
+```
+### 间隙锁
+	在Session_1下面执行 update account set name = "zhuge" where id > 8 and id < 18;则其他Session 没法在这个范围包含的所有行记录以及行记录所在的间隙里插入或删除任何数据，间隙锁是在可重复读隔离级别下才能生效。
+
+### 临键锁
+	行锁与间隙锁的组合
+
+
+
+
+
+
+# 事务
 每个数据库连接都有一个全局变量@@tx_isolation,表示当前的事务隔离级别
 
 ## 查看隔离级别
@@ -508,8 +547,21 @@ show tables status like 'employees';
 	set transaction isolation level read commit;
 ## 设置全局的隔离级别
 	set global transaction isolation level read commit;
+
+
+# Undo日志版本链 和 ReadView机制
+	一行数据被多个事务依次修改后,在每个事务修改完成后,Mysql会保留修改前的数据undo回滚日志,并且用两个隐藏字段trx_id和roll_pointer把这些undo日志串联起来形成一个历史记录版本链
+
+![image-20220315222932724](E:\Typora\Mysql\image-20220315222932724.png)
+
 # MVCC
+
+	多版本并发控制隔离机制（Multi-Version Concurrency Control）,在可重复读隔离级别下如何事务较高的隔离性，Mysql在读已提交和可重复读隔离级别下都实现了MVCC机制。
+
+
 # BufferPool
+
+# Redo与Undo日志
 
 
 
