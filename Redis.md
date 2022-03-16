@@ -1,0 +1,26 @@
+# NoSql
+# 架构演进
+# 数据模型
+# 四大分类
+# CAP
+# BASE
+# Redis入门
+# Redis安装
+## Windows
+## Linux
+# 五大基本数据类型
+## String
+## List
+## Set
+## Hash
+## Zset
+# 三种特殊数据类型
+## Geo
+## hyperlog
+## bitmap
+# 配置
+# 持久化
+## RDB
+## AOF
+# Redis事务操作
+
