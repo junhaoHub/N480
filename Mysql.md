@@ -81,6 +81,7 @@ grant select,insert,delete,update on [TABLENAME].* to junhao@localhost identifie
 
 # 存储引擎
 ## Myisam
+只支持表锁，高并发场景下会出现严重的问题
 
 ![image-20220316105355803](E:\Typora\Mysql\image-20220316105355803.png)
 
@@ -89,7 +90,7 @@ grant select,insert,delete,update on [TABLENAME].* to junhao@localhost identifie
 	.MYI_数据库表的索引文件
 
 ## InnoDB
-按照B+树组织的一个索引结构文件
+按照B+树组织的一个索引结构文件，支持行锁
 
 ![image-20220316105811214](E:\Typora\Mysql\image-20220316105811214.png)
 
