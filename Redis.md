@@ -804,7 +804,136 @@ string
 # 配置文件
 # 持久化
 ## RDB
+Redis Database，在指定的时间间隔内将内存中的数据集写入磁盘，俗称快照
+
+![image-20220320121105131](E:\Typora\Redis\image-20220320121105131.png)
+
+### 过程
+	Redis会单独分支（fork）一个子进程，它会先将数据写入到一个临时文件中，待持久化结束后，在用临时文件替换上次被持久化好的文件。
+### 优点
+	整个过程中，主进程是不进行任何IO操作，这确保了极高的性能。
+	如果需要进行大规模数据的恢复,并且对于数据恢复的完整性不是非常敏感,那么RDB方式要比AOF方式更加的高效。
+
+### 缺点
+	最后一次持久化的数据可能丢失。
+
+### 触发机制
+	save的规则满足的情况下会自动触发rdb原则
+	执行flushall命令，也会触发我们的rdb原则
+	退出redis，也会自动产生rdb文件
+
+### save
+
+![image-20220320121625970](E:\Typora\Redis\image-20220320121625970.png)
+
+```bash
+#持久化规则，持久化到文件 .rdb .aof
+#900秒内 至少一个key进行了修改，就进行持久化
+save 900 10
+#300秒内 至少10个key进行了...
+save 60 10000
+```
+
+#### bgsave
+
+`bgsave` 是异步进行，进行持久化的时候，`redis` 还可以将继续响应客户端请求 ；
+
+![image-20220320122804979](E:\Typora\Redis\image-20220320122804979.png)
+
+**bgsave和save对比**
+
+| 命令   | save               | bgsave                             |
+| ------ | ------------------ | ---------------------------------- |
+| IO类型 | 同步               | 异步                               |
+| 阻塞？ | 是                 | 是（阻塞发生在fock()，通常非常快） |
+| 复杂度 | O(n)               | O(n)                               |
+| 优点   | 不会消耗额外的内存 | 不阻塞客户端命令                   |
+| 缺点   | 阻塞客户端命令     | 需要fock子进程，消耗内存           |
+
+### 优缺点
+
+**优点：**
+
+1. 适合大规模的数据恢复
+2. 对数据的完整性要求不高
+
+**缺点：**
+
+1. 需要一定的时间间隔进行操作，如果redis意外宕机了，这个最后一次修改的数据就没有了。
+2. fork进程的时候，会占用一定的内容空间。
+
+
+
+
 ## AOF
+
+ Append Only File,将我们所有的命令都记录下来
+
+将我们所有的命令都记录下来，history，恢复的时候就把这个文件全部再执行一遍
+
+> 以日志的形式来记录每个写的操作，将Redis执行过的所有指令记录下来（读操作不记录），只许追加文件但不可以改写文件，redis启动之初会读取该文件重新构建数据，换言之，redis重启的话就根据日志文件的内容将写指令从前到后执行一次以完成数据的恢复工作。
+
+### AOF相对于RDB
+
+ 快照功能（RDB）并不是非常耐久（durable）： 如果 Redis 因为某些原因而造成故障停机， 那么服务器将丢失最近写入、以及未保存到快照中的那些数据。 从 1.1 版本开始， Redis 增加了一种完全耐久的持久化方式： AOF 持久化。
+
+如果要使用AOF，需要修改配置文件：
+
+![image-20220320125055480](E:\Typora\Redis\image-20220320125055480.png)
+
+`appendonly no yes`则表示启用AOF
+
+默认是不开启的，我们需要手动配置，然后重启redis，就可以生效了！
+
+如果这个aof文件有错位，这时候redis是启动不起来的，我需要修改这个aof文件
+
+redis给我们提供了一个工具`redis-check-aof --fix`
+
+> 优点和缺点
+
+```bash
+appendonly yes  # 默认是不开启aof模式的，默认是使用rdb方式持久化的，在大部分的情况下，rdb完全够用
+appendfilename "appendonly.aof"
+
+# appendfsync always # 每次修改都会sync 消耗性能
+appendfsync everysec # 每秒执行一次 sync 可能会丢失这一秒的数据
+# appendfsync no # 不执行 sync ,这时候操作系统自己同步数据，速度最快
+```
+
+**优点**
+
+1. 每一次修改都会同步，文件的完整性会更加好
+2. 没秒同步一次，可能会丢失一秒的数据
+3. 从不同步，效率最高
+
+**缺点**
+
+1. 相对于数据文件来说，aof远远大于rdb，修复速度比rdb慢！
+2. Aof运行效率也要比rdb慢，所以我们redis默认的配置就是rdb持久化
+
+### RDB 和 AOF 对比
+
+| RDB        | AOF    |              |
+| ---------- | ------ | ------------ |
+| 启动优先级 | 低     | 高           |
+| 体积       | 小     | 大           |
+| 恢复速度   | 快     | 慢           |
+| 数据安全性 | 丢数据 | 根据策略决定 |
+
+### 如何选择使用哪种持久化方式？
+
+一般来说， 如果想达到足以媲美 PostgreSQL 的数据安全性， 你应该同时使用两种持久化功能。
+
+如果你非常关心你的数据， 但仍然可以承受数分钟以内的数据丢失， 那么你可以只使用 RDB 持久化。
+
+有很多用户都只使用 AOF 持久化， 但并不推荐这种方式： 因为定时生成 RDB 快照（snapshot）非常便于进行数据库备份， 并且 RDB 恢复数据集的速度也要比 AOF 恢复的速度要快。
+
+
+
+
+
+
+
 # 事务
 
 ## 特性
@@ -961,8 +1090,200 @@ QUEUED
 ## 订阅发布
 ## 主从复制
 ## 哨兵模式
-## 缓存穿透
-## 缓存雪崩
+
+**主从切换技术的方法是：当主服务器宕机后，需要手动把一台从服务器切换为主服务器，这就需要人工干预，费事费力，还会造成一段时间内服务不可用。**这不是一种推荐的方式，更多时候，我们优先考虑**哨兵模式**。
+
+单机单个哨兵
+
+[外链图片转存失败,源站可能有防盗链机制,建议将图片保存下来直接上传(img-2ENYVAPp-1597890996527)(狂神说 Redis.assets/image-20200818233231154.png)]
+
+哨兵的作用：
+
+- 通过发送命令，让Redis服务器返回监控其运行状态，包括主服务器和从服务器。
+- 当哨兵监测到master宕机，会自动将slave切换成master，然后通过**发布订阅模式**通知其他的从服务器，修改配置文件，让它们切换主机。
+
+多哨兵模式
+
+[外链图片转存失败,源站可能有防盗链机制,建议将图片保存下来直接上传(img-Ga1RyfVc-1597890996528)(狂神说 Redis.assets/image-20200818233316478.png)]
+
+哨兵的核心配置
+
+```
+sentinel monitor mymaster 127.0.0.1 6379 1
+```
+
+- 数字1表示 ：当一个哨兵主观认为主机断开，就可以客观认为主机故障，然后开始选举新的主机。
+
+> 测试
+
+```
+redis-sentinel xxx/sentinel.conf
+```
+
+成功启动哨兵模式
+
+![在这里插入图片描述](https://img-blog.csdnimg.cn/20200513215752444.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80Mzg3MzIyNw==,size_16,color_FFFFFF,t_70)
+
+此时哨兵监视着我们的主机6379，当我们断开主机后：
+
+![在这里插入图片描述](https://img-blog.csdnimg.cn/20200513215806972.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80Mzg3MzIyNw==,size_16,color_FFFFFF,t_70)
+
+> 哨兵模式优缺点
+
+**优点：**
+
+1. 哨兵集群，基于主从复制模式，所有主从复制的优点，它都有
+2. 主从可以切换，故障可以转移，系统的可用性更好
+3. 哨兵模式是主从模式的升级，手动到自动，更加健壮
+
+**缺点：**
+
+1. Redis不好在线扩容，集群容量一旦达到上限，在线扩容就十分麻烦
+2. 实现哨兵模式的配置其实是很麻烦的，里面有很多配置项
+
+> 哨兵模式的全部配置
+
+完整的哨兵模式配置文件 sentinel.conf
+
+```bash
+# Example sentinel.conf
+ 
+# 哨兵sentinel实例运行的端口 默认26379
+port 26379
+ 
+# 哨兵sentinel的工作目录
+dir /tmp
+ 
+# 哨兵sentinel监控的redis主节点的 ip port 
+# master-name  可以自己命名的主节点名字 只能由字母A-z、数字0-9 、这三个字符".-_"组成。
+# quorum 当这些quorum个数sentinel哨兵认为master主节点失联 那么这时 客观上认为主节点失联了
+# sentinel monitor <master-name> <ip> <redis-port> <quorum>
+sentinel monitor mymaster 127.0.0.1 6379 1
+ 
+# 当在Redis实例中开启了requirepass foobared 授权密码 这样所有连接Redis实例的客户端都要提供密码
+# 设置哨兵sentinel 连接主从的密码 注意必须为主从设置一样的验证密码
+# sentinel auth-pass <master-name> <password>
+sentinel auth-pass mymaster MySUPER--secret-0123passw0rd
+ 
+ 
+# 指定多少毫秒之后 主节点没有应答哨兵sentinel 此时 哨兵主观上认为主节点下线 默认30秒
+# sentinel down-after-milliseconds <master-name> <milliseconds>
+sentinel down-after-milliseconds mymaster 30000
+ 
+# 这个配置项指定了在发生failover主备切换时最多可以有多少个slave同时对新的master进行 同步，
+这个数字越小，完成failover所需的时间就越长，
+但是如果这个数字越大，就意味着越 多的slave因为replication而不可用。
+可以通过将这个值设为 1 来保证每次只有一个slave 处于不能处理命令请求的状态。
+# sentinel parallel-syncs <master-name> <numslaves>
+sentinel parallel-syncs mymaster 1
+ 
+ 
+ 
+# 故障转移的超时时间 failover-timeout 可以用在以下这些方面： 
+#1. 同一个sentinel对同一个master两次failover之间的间隔时间。
+#2. 当一个slave从一个错误的master那里同步数据开始计算时间。直到slave被纠正为向正确的master那里同步数据时。
+#3.当想要取消一个正在进行的failover所需要的时间。  
+#4.当进行failover时，配置所有slaves指向新的master所需的最大时间。不过，即使过了这个超时，slaves依然会被正确配置为指向master，但是就不按parallel-syncs所配置的规则来了
+# 默认三分钟
+# sentinel failover-timeout <master-name> <milliseconds>
+sentinel failover-timeout mymaster 180000
+ 
+# SCRIPTS EXECUTION
+ 
+#配置当某一事件发生时所需要执行的脚本，可以通过脚本来通知管理员，例如当系统运行不正常时发邮件通知相关人员。
+#对于脚本的运行结果有以下规则：
+#若脚本执行后返回1，那么该脚本稍后将会被再次执行，重复次数目前默认为10
+#若脚本执行后返回2，或者比2更高的一个返回值，脚本将不会重复执行。
+#如果脚本在执行过程中由于收到系统中断信号被终止了，则同返回值为1时的行为相同。
+#一个脚本的最大执行时间为60s，如果超过这个时间，脚本将会被一个SIGKILL信号终止，之后重新执行。
+ 
+#通知型脚本:当sentinel有任何警告级别的事件发生时（比如说redis实例的主观失效和客观失效等等），将会去调用这个脚本，
+#这时这个脚本应该通过邮件，SMS等方式去通知系统管理员关于系统不正常运行的信息。调用该脚本时，将传给脚本两个参数，
+#一个是事件的类型，
+#一个是事件的描述。
+#如果sentinel.conf配置文件中配置了这个脚本路径，那么必须保证这个脚本存在于这个路径，并且是可执行的，否则sentinel无法正常启动成功。
+#通知脚本
+# sentinel notification-script <master-name> <script-path>
+  sentinel notification-script mymaster /var/redis/notify.sh
+ 
+# 客户端重新配置主节点参数脚本
+# 当一个master由于failover而发生改变时，这个脚本将会被调用，通知相关的客户端关于master地址已经发生改变的信息。
+# 以下参数将会在调用脚本时传给脚本:
+# <master-name> <role> <state> <from-ip> <from-port> <to-ip> <to-port>
+# 目前<state>总是“failover”,
+# <role>是“leader”或者“observer”中的一个。 
+# 参数 from-ip, from-port, to-ip, to-port是用来和旧的master和新的master(即旧的slave)通信的
+# 这个脚本应该是通用的，能被多次调用，不是针对性的。
+# sentinel client-reconfig-script <master-name> <script-path>
+sentinel client-reconfig-script mymaster /var/redis/reconfig.sh
+```
+
+## 十六、缓存穿透与雪崩
+
+### 缓存穿透（查不到）
+
+> 概念
+
+在默认情况下，用户请求数据时，会先在缓存(Redis)中查找，若没找到即缓存未命中，再在数据库中进行查找，数量少可能问题不大，可是一旦大量的请求数据（例如秒杀场景）缓存都没有命中的话，就会全部转移到数据库上，造成数据库极大的压力，就有可能导致数据库崩溃。网络安全中也有人恶意使用这种手段进行攻击被称为洪水攻击。
+
+> 解决方案
+
+**布隆过滤器**
+
+对所有可能查询的参数以Hash的形式存储，以便快速确定是否存在这个值，在控制层先进行拦截校验，校验不通过直接打回，减轻了存储系统的压力。
+
+![在这里插入图片描述](https://img-blog.csdnimg.cn/20200513215824722.jpg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80Mzg3MzIyNw==,size_16,color_FFFFFF,t_70)
+
+**缓存空对象**
+
+一次请求若在缓存和数据库中都没找到，就在缓存中方一个空对象用于处理后续这个请求。
+
+![在这里插入图片描述](https://img-blog.csdnimg.cn/20200513215836317.jpg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80Mzg3MzIyNw==,size_16,color_FFFFFF,t_70)
+
+ 这样做有一个缺陷：存储空对象也需要空间，大量的空对象会耗费一定的空间，存储效率并不高。解决这个缺陷的方式就是设置较短过期时间
+
+即使对空值设置了过期时间，还是会存在缓存层和存储层的数据会有一段时间窗口的不一致，这对于需要保持一致性的业务会有影响。
+
+### 缓存击穿（量太大，缓存过期）
+
+> 概念
+
+ 相较于缓存穿透，缓存击穿的目的性更强，一个存在的key，在缓存过期的一刻，同时有大量的请求，这些请求都会击穿到DB，造成瞬时DB请求量大、压力骤增。这就是缓存被击穿，只是针对其中某个key的缓存不可用而导致击穿，但是其他的key依然可以使用缓存响应。
+
+ 比如热搜排行上，一个热点新闻被同时大量访问就可能导致缓存击穿。
+
+> 解决方案
+
+1. **设置热点数据永不过期**
+
+   这样就不会出现热点数据过期的情况，但是当Redis内存空间满的时候也会清理部分数据，而且此种方案会占用空间，一旦热点数据多了起来，就会占用部分空间。
+
+2. **加互斥锁(分布式锁)**
+
+   在访问key之前，采用SETNX（set if not exists）来设置另一个短期key来锁住当前key的访问，访问结束再删除该短期key。保证同时刻只有一个线程访问。这样对锁的要求就十分高。
+
+### 缓存雪崩
+
+> 概念
+
+大量的key设置了相同的过期时间，导致在缓存在同一时刻全部失效，造成瞬时DB请求量大、压力骤增，引起雪崩。
+
+![在这里插入图片描述](https://img-blog.csdnimg.cn/20200513215850428.jpeg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80Mzg3MzIyNw==,size_16,color_FFFFFF,t_70)
+
+> 解决方案
+
+- redis高可用
+
+  这个思想的含义是，既然redis有可能挂掉，那我多增设几台redis，这样一台挂掉之后其他的还可以继续工作，其实就是搭建的集群
+
+- 限流降级
+
+  这个解决方案的思想是，在缓存失效后，通过加锁或者队列来控制读数据库写缓存的线程数量。比如对某个key只允许一个线程查询数据和写缓存，其他线程等待。
+
+- 数据预热
+
+  数据加热的含义就是在正式部署之前，我先把可能的数据先预先访问一遍，这样部分可能大量访问的数据就会加载到缓存中。在即将发生大并发访问前手动触发加载缓存不同的key，设置不同的过期时间，让缓存失效的时间点尽量均匀。
+
 ## Jedis
 使用Java来操作Redis，Jedis是Redis官方推荐使用的Java连接redis的客户端。
 
@@ -1076,7 +1397,7 @@ QUEUED
        }
    }
 ```
-	
+
 
 
 ## SpringBoot
