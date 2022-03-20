@@ -758,8 +758,9 @@ OK
 
 ### 应用场景
 
-统计用户信息、活跃、不活跃！登录、未登录！打开，未打卡！
+	统计用户信息、活跃、不活跃！登录、未登录！打开，未打卡！
 
+### 基本操作
 | 命令                                  | 描述                                                         |
 | ------------------------------------- | ------------------------------------------------------------ |
 | `setbit key offset value`             | 为指定key的offset位设置值                                    |
@@ -800,20 +801,284 @@ string
 
 
 
-
-
-
 # 配置文件
 # 持久化
 ## RDB
 ## AOF
-# 事务操作
+# 事务
+
+## 特性
+事务中每条命令都会被序列化，执行过程中按顺序执行，不允许其他命令进行干扰。
+
+	一次性
+	顺序性
+	排他性
+
+**Redis事务没有隔离级别的概念,redis事务不能保证原子性**
+
+## 操作过程
+
+	开启事务（`multi`）
+	命令入队
+	执行事务（`exec`）
+
+所以事务中的命令在加入时都没有被执行，直到提交时才会开始执行(Exec)一次性完成。
+
+**放弃事务(`discurd`)**
+
+```bash
+127.0.0.1:6379> multi
+OK
+127.0.0.1:6379> set k1 v1
+QUEUED
+127.0.0.1:6379> set k2 v2
+QUEUED
+127.0.0.1:6379> DISCARD # 放弃事务
+OK
+127.0.0.1:6379> EXEC 
+(error) ERR EXEC without MULTI # 当前未开启事务
+127.0.0.1:6379> get k1 # 被放弃事务中命令并未执行
+(nil)
+```
+
+## 事务错误
+> 代码语法错误（编译时异常）所有的命令都不执行
+
+```bash
+127.0.0.1:6379> multi
+OK
+127.0.0.1:6379> set k1 v1
+QUEUED
+127.0.0.1:6379> set k2 v2
+QUEUED
+127.0.0.1:6379> error k1 # 这是一条语法错误命令
+(error) ERR unknown command `error`, with args beginning with: `k1`, # 会报错但是不影响后续命令入队 
+127.0.0.1:6379> get k2
+QUEUED
+127.0.0.1:6379> EXEC
+(error) EXECABORT Transaction discarded because of previous errors. # 执行报错
+127.0.0.1:6379> get k1 
+(nil) # 其他命令并没有被执行
+```
+
+> 代码逻辑错误 (运行时异常) **其他命令可以正常执行 ** >>> 所以不保证事务原子性
+
+```bash
+127.0.0.1:6379> multi
+OK
+127.0.0.1:6379> set k1 v1
+QUEUED
+127.0.0.1:6379> set k2 v2
+QUEUED
+127.0.0.1:6379> INCR k1 # 这条命令逻辑错误（对字符串进行增量）
+QUEUED
+127.0.0.1:6379> get k2
+QUEUED
+127.0.0.1:6379> exec
+1) OK
+2) OK
+3) (error) ERR value is not an integer or out of range # 运行时报错
+4) "v2" # 其他命令正常执行
+```
+### 总结
+	有一条命令报错了,但是后面的指令依旧正常执行成功了。
+	所以说Redis单条指令保证原子性，但是Redis事务不能保证原子性。
+
+## 监控
+### 悲观锁
+	很悲观，认为什么时候都会出现问题，无论做什么都会加锁
+
+### 乐观锁
+	很乐观，认为什么时候都不会出现问题，所以不会上锁！更新数据的时候去判断一下，在此期间是否有人修改过这个数据
+	获取version、更新的时候比较version
+	使用`watch key`监控指定数据，相当于乐观锁加锁。
+
+> 正常执行
+
+```bash
+127.0.0.1:6379> set money 100 # 设置余额:100
+OK
+127.0.0.1:6379> set use 0 # 支出使用:0
+OK
+127.0.0.1:6379> watch money # 监视money (上锁)
+OK
+127.0.0.1:6379> multi #执行事务,事务正常结束,数据期间没有发生变动
+OK
+127.0.0.1:6379> DECRBY money 20
+QUEUED
+127.0.0.1:6379> INCRBY use 20
+QUEUED
+127.0.0.1:6379> exec # 监视值没有被中途修改，事务正常执行
+1) (integer) 80
+2) (integer) 20
+```
+
+> 测试多线程修改值，使用watch可以当做redis的乐观锁操作（相当于getversion）
+
+我们启动另外一个客户端模拟插队线程。
+
+线程1：
+
+```bash
+127.0.0.1:6379> watch money # money上锁
+OK
+127.0.0.1:6379> multi
+OK
+127.0.0.1:6379> DECRBY money 20
+QUEUED
+127.0.0.1:6379> INCRBY use 20
+QUEUED
+127.0.0.1:6379> 	# 此时事务并没有执行
+```
+
+模拟线程插队，线程2：
+
+```bash
+127.0.0.1:6379> INCRBY money 500 # 修改了线程一中监视的money
+(integer) 600
+12
+```
+
+回到线程1，执行事务：
+
+```bash
+127.0.0.1:6379> EXEC # 执行之前，另一个线程修改了我们的值，这个时候就会导致事务执行失败
+(nil) # 没有结果，说明事务执行失败
+
+127.0.0.1:6379> get money # 线程2 修改生效
+"600"
+127.0.0.1:6379> get use # 线程1事务执行失败，数值没有被修改
+"0"
+```
+
+> 解锁获取最新值，然后再加锁进行事务。
+>
+> `unwatch`进行解锁。
+
+注意：每次提交执行exec后都会自动释放锁，不管是否成功
+
+
 ## 订阅发布
 ## 主从复制
 ## 哨兵模式
 ## 缓存穿透
 ## 缓存雪崩
 ## Jedis
+使用Java来操作Redis，Jedis是Redis官方推荐使用的Java连接redis的客户端。
+
+### 导入依赖
+```xml
+   <!--导入jredis的包-->
+   <dependency>
+       <groupId>redis.clients</groupId>
+       <artifactId>jedis</artifactId>
+       <version>3.2.0</version>
+   </dependency>
+   <!--fastjson-->
+   <dependency>
+       <groupId>com.alibaba</groupId>
+       <artifactId>fastjson</artifactId>
+       <version>1.2.70</version>
+   </dependency>
+```
+### 编码测试
+
+   - 连接数据库
+
+     1. 修改redis的配置文件
+
+        ```bash
+        vim /usr/local/bin/myconfig/redis.conf
+        1
+        ```
+
+        1. 将只绑定本地注释
+
+           [外链图片转存失败,源站可能有防盗链机制,建议将图片保存下来直接上传(img-4IRUFJ95-1597890996520)(狂神说 Redis.assets/image-20200813161921480.png)]
+
+        2. 保护模式改为 no
+
+           [外链图片转存失败,源站可能有防盗链机制,建议将图片保存下来直接上传(img-oKjIVapw-1597890996521)(狂神说 Redis.assets/image-20200813161939847.png)]
+
+        3. 允许后台运行
+
+           [外链图片转存失败,源站可能有防盗链机制,建议将图片保存下来直接上传(img-c2IMvpZL-1597890996522)(狂神说 Redis.assets/image-20200813161954567.png)]
+
+3. 开放端口6379
+
+   ```bash
+   firewall-cmd --zone=public --add-port=6379/tcp --permanet
+   1
+   ```
+
+   重启防火墙服务
+
+   ```bash
+   systemctl restart firewalld.service
+   1
+   ```
+
+   1. 阿里云服务器控制台配置安全组
+
+   2. 重启redis-server
+
+      ```bash
+      [root@AlibabaECS bin]# redis-server myconfig/redis.conf 
+      1
+      ```
+
+
+
+- 操作命令
+
+  **TestPing.java**
+
+  ```java
+  public class TestPing {
+      public static void main(String[] args) {
+          Jedis jedis = new Jedis("192.168.xx.xxx", 6379);
+          String response = jedis.ping();
+          System.out.println(response); // PONG
+      }
+  }
+  ```
+
+- 断开连接
+
+1. **事务**
+
+```java
+   public class TestTX {
+       public static void main(String[] args) {
+           Jedis jedis = new Jedis("39.99.xxx.xx", 6379);
+   
+           JSONObject jsonObject = new JSONObject();
+           jsonObject.put("hello", "world");
+           jsonObject.put("name", "kuangshen");
+           // 开启事务
+           Transaction multi = jedis.multi();
+           String result = jsonObject.toJSONString();
+           // jedis.watch(result)
+           try {
+               multi.set("user1", result);
+               multi.set("user2", result);
+               // 执行事务
+               multi.exec();
+           }catch (Exception e){
+               // 放弃事务
+               multi.discard();
+           } finally {
+               // 关闭连接
+               System.out.println(jedis.get("user1"));
+               System.out.println(jedis.get("user2"));
+               jedis.close();
+           }
+       }
+   }
+```
+	
+
+
 ## SpringBoot
 ## 实践分析
 
