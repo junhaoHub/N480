@@ -731,3 +731,104 @@ enum Season1 implements Info{
         return seasonDesc;
     }
 ```
+# 集合
+## Collection接口
+单列数据，定义了存取一组对象的方法的集合
+
+![image-20220325175146470](E:\Typora\JavaSenior\image-20220325175146470.png)
+
+	List 元素有序、可重复的集合,又被称为“动态数组”
+	Set 元素无序、不可重复的集合
+	Vector 线程安全的,效率低
+	ArrayList 线程不安全的,效率高,底层使用object[]存储
+	LinkedList 对于频繁的插入删除操作,存储效率最高,底层使用双向链表存储
+	LinkedHashSet 在添加数据的同时,每个数据还维护了两个引用,记录此数据,对于频繁的遍历操作，效率更高         
+	TreeSet 要求添加的数据,是相同类的对象
+
+### HashSet
+HashMap，作为Set接口的主要实现类 ，线程不安全
+#### 无序性
+	存储的数据在底层数据中并非按照索引的顺序添加，而是根据数据的哈希值进行添加
+#### 不可重复性
+	相同的元素只能添加一个
+#### 底层原理
+	在向HashSet中添加元素时,调用所在类的hashCode()方法
+	使用散列函数(取模)计算出数组中的存放位置(索引位置)
+	假如已有相同的模数索引,就按照equals()判断当前链表的元素是否重复,假如返回false,就存入当前链表
+	jdk中（七上八下）版本七为新元素在链表中,版本八为新元素在数组中。
+
+### 基本操作
+	retainAll(Collection coll1) 交集，获取当前集合和其他集合的交集
+	hashCode( ) 返回当前对象的哈希值
+	集合——>数组 toArray()
+	数组——>集合 Arrays.asList(new String[]{“AA”,”BB”})
+
+## Map接口
+
+双列数据,保存具有映射关系 key-value对 的集合
+
+![image-20220325190113786](E:\Typora\JavaSenior\image-20220325190113786.png)
+
+### HashMap
+Map的主要实现类，线程不安全，但是效率高，可存储任何数据
+#### 特点
+	key 不可重复,且无序,使用Set存储,重写了equals()和hashCode()
+	value 可重复的,使用Collection存储value,key无序,value也无序。重写了equals()
+
+#### HashMap的底层原理
+	数组+链表(JDK7)
+	数组+链表+红黑树(JDK 8)
+	new HashMap() 底层没有创建一个长度为16的数组
+	jdk8底层的数组是 Node [ ] 而非Entry[ ]
+	首次调用put()底层创建为16的数组
+	当数组的某一个索引位置的元素，它以链表形式存在的数据个数>8,且当数组长度>64
+	此时索引位置上的所有数据改为使用红黑树存储
+
+
+### LinkedHashMap
+
+保证在遍历map元素时，可以按照添加顺序实现遍历
+
+	在原有的HashMap底层基础上,添加了一对指针
+	对于频繁的遍历操作,此类执行效率高
+
+### TreeMap
+按照key-value对进行排序，实现排序遍历。此时只能用key排序
+	底层使用红黑树—>二叉树—>二叉树排序
+
+### HashTable
+	线程安全,效率低,不能存储null的key和value
+
+### properties
+	常用来处理配置文件，key和value都是String类型的
+
+## Iterator接口
+用于遍历Collection集合中的元素，又不暴露该对象的内部细节
+
+	仅用于遍历集合，本身并不提
+
+### 基本操作
+
+	hasNext() 如果仍有元素可以迭代,则返回true
+	next() 返回迭代的下一个元素
+	remove() 从迭代器指向的 collection 中移除迭代器返回的最后一个元素
+
+### 执行原理
+
+![image-20220325221725844](E:\Typora\JavaSenior\image-20220325221725844.png)
+
+
+
+
+
+## 面试题：HashMap和HashTable的异同
+
+	HashTable是线程安全的，HashMap是非线程安全的
+	HashTable的方法是同步的，HashMap的方法不是
+	HashMap可以将空值作为一个表的key或value，HashMap的方法不是
+	HashMap默认初始化值是16，之后每次扩充，容量变为原来的2倍
+	Hashtable默认初始化值是11，之后每次扩充，容量变为原来的2n+1
+
+
+## 面试题：CurrentHashMap 和HashTable的异同
+	CurrentHashMap为了在高并发场景下，执行效率更高，使用了分段锁机制。
