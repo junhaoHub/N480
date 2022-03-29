@@ -745,23 +745,130 @@ enum Season1 implements Info{
 	LinkedHashSet 在添加数据的同时,每个数据还维护了两个引用,记录此数据,对于频繁的遍历操作，效率更高         
 	TreeSet 要求添加的数据,是相同类的对象
 
+### ArrayList
+作为List接口的主要实现类，线程不安全，效率高；底层使用Object[ ] element
+#### 底层源码
+```java
+public ArrayList() {
+	this.elementData = DEFAULTCAPACITY_EMPTY_ELEMENTDATA;
+}
+/**
+ * 创建一个初始容量为0的数组elementData.
+ */
+private static final Object[] DEFAULTCAPACITY_EMPTY_ELEMENTDATA = {};
+
+//确保容量充足
+public void ensureCapacity(int minCapacity) {
+        if (minCapacity > elementData.length
+            && !(elementData == DEFAULTCAPACITY_EMPTY_ELEMENTDATA
+                 && minCapacity <= DEFAULT_CAPACITY)) {
+            modCount++;
+            grow(minCapacity);
+        }
+    }
+    
+
+
+//如果此次的添加导致底层数组容量不够,则需要扩容
+private Object[] grow(int minCapacity) {
+        int oldCapacity = elementData.length;
+        if (oldCapacity > 0 || elementData != DEFAULTCAPACITY_EMPTY_ELEMENTDATA) {
+            int newCapacity = ArraysSupport.newLength(oldCapacity,
+                    minCapacity - oldCapacity, /* minimum growth */
+                    oldCapacity >> 1           /* preferred growth */);
+            return elementData = Arrays.copyOf(elementData, newCapacity);
+        } else {
+            return elementData = new Object[Math.max(DEFAULT_CAPACITY, minCapacity)];
+        }
+    }
+```
+总结：开发中使用带参的构造器, 会避免在中间扩容,jdk7中的ArrayList对象的创建类似于饿汉式，jdk8中的则类似于单例模式的懒汉式，延迟了数组的创建，节省内存。
+
+### LinkedList
+对于频繁的插入删除操作，使用此类效率比ArrayList效率高；底层使用双向链表存储
+#### 底层源码
+```java
+/**
+     * Pointer to first node.
+     */
+    transient Node<E> first;
+
+    /**
+     * Pointer to last node.
+     */
+    transient Node<E> last;
+
+/**
+     * Links e as first element.
+     */
+    private void linkFirst(E e) {
+        final Node<E> f = first;
+        final Node<E> newNode = new Node<>(null, e, f);
+        first = newNode;
+        if (f == null)
+            last = newNode;
+        else
+            f.prev = newNode;
+        size++;
+        modCount++;
+    }
+
+/**
+  * Links e as last element.
+  */
+void linkLast(E e) {
+        final Node<E> l = last;
+        final Node<E> newNode = new Node<>(l, e, null);
+        last = newNode;
+        if (l == null)
+            first = newNode;
+        else
+            l.next = newNode;
+        size++;
+        modCount++;
+    }
+
+```
+
+### Vector
+作为List接口的古老实现类：线程安全的，效率低下；底层使用Object[ ] elementData存储
+
+### Set
+存储无序的，不可重复的数据
+
 ### HashSet
-HashMap，作为Set接口的主要实现类 ，线程不安全
+作为Set接口的主要实现类 ，线程不安全的，可以存储null值
+
+#### 特性
+	无序性: 不等于随机性,存储的数据在底层数组中并非按照数组索引的顺序添加,而是根据数据的哈希值决定的
+	不可重复性: 保证添加的元素按照equals方法判断,不能返回true
+
+
 #### 无序性
-	存储的数据在底层数据中并非按照索引的顺序添加，而是根据数据的哈希值进行添加
+	存储的数据在底层数据中并非按照索引的顺序添加,而是根据数据的哈希值进行添加
 #### 不可重复性
 	相同的元素只能添加一个
 #### 底层原理
 	在向HashSet中添加元素时,调用所在类的hashCode()方法
 	使用散列函数(取模)计算出数组中的存放位置(索引位置)
 	假如已有相同的模数索引,就按照equals()判断当前链表的元素是否重复,假如返回false,就存入当前链表
-	jdk中（七上八下）版本七为新元素在链表中,版本八为新元素在数组中。
+	jdk中（七上八下）版本七为新元素在链表中,版本八为新元素在数组中
 
-### 基本操作
-	retainAll(Collection coll1) 交集，获取当前集合和其他集合的交集
+#### 基本操作
+	retainAll(Collection coll1) 交集,获取当前集合和其他集合的交集
 	hashCode( ) 返回当前对象的哈希值
 	集合——>数组 toArray()
 	数组——>集合 Arrays.asList(new String[]{“AA”,”BB”})
+
+### LinkedHashSet
+作为HashSet的子类；遍历其内部数据时，可以按照添加的顺序遍历
+
+### TreeSet
+可以按照添加对象的指定属性，进行排序
+
+
+
+
 
 ## Map接口
 
@@ -821,7 +928,10 @@ Map的主要实现类，线程不安全，但是效率高，可存储任何数�
 
 
 
-## 面试题：HashMap和HashTable的异同
+
+
+
+## 面试题：HashMap 和 HashTable的异同
 
 	HashTable是线程安全的，HashMap是非线程安全的
 	HashTable的方法是同步的，HashMap的方法不是
@@ -830,5 +940,5 @@ Map的主要实现类，线程不安全，但是效率高，可存储任何数�
 	Hashtable默认初始化值是11，之后每次扩充，容量变为原来的2n+1
 
 
-## 面试题：CurrentHashMap 和HashTable的异同
+## 面试题：CurrentHashMap 和 HashTable的异同
 	CurrentHashMap为了在高并发场景下，执行效率更高，使用了分段锁机制。
