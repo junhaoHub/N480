@@ -847,7 +847,7 @@ void linkLast(E e) {
 	在向HashSet中添加元素a,首先调用元素a所在类的hashCode()方法，计算元素a的哈希值
 	使用散列函数(取模)计算出数组中的存放位置(索引位置)
 	假如已有相同的模数索引,就按照equals()判断当前链表的元素是否重复,假如返回false,就存入当前链表
-	jdk中（七上八下）版本七为新元素放在数组中，指向原来的元素(里面),版本八为新元素在链表边(外面)
+	jdk中（七上八下）版本七为新元素放在数组中,指向原来的元素(里面),版本八为新元素在链表边(外面)
 
 #### 基本操作
 	retainAll(Collection coll1) 交集,获取当前集合和其他集合的交集
@@ -892,9 +892,57 @@ Map的主要实现类，线程不安全，但是效率高，可存储任何数�
 
 ##### JDK7
 	new HashMap() 底层创建了一个长度为16的Entry[] table
-	首次调用put()底层创建为16的数组
-	当数组的某一个索引位置的元素,它以链表形式存在的数据个数 > 8,且当数组长度 > 64
-	此时索引位置上的所有数据改为使用红黑树存储
+	首次调用key1所在类的hashCode()计算key1哈希值,此哈希值经过某种算法计算以后,得到在Entry数组中的存放位置
+	如果key1的哈希值与已经存在的数据的哈希值都不相同,此时添加成功
+	如果key1的哈希值与已经存在的数据的哈希值相同,调用key1所在类的equals()方法，
+		如果返回false,则添加成功
+		如果返回true,则使用新value替换旧value
+
+```java
+//底层创建了一个长度为16的Entry[] table
+public HashMap(int initialCapacity, float loadFactor) {
+    if (initialCapacity < 0)
+        throw new IllegalArgumentException("Illegal initial capacity: " +
+                                           initialCapacity);
+    if (initialCapacity > MAXIMUM_CAPACITY)
+        initialCapacity = MAXIMUM_CAPACITY;
+    if (loadFactor <= 0 || Float.isNaN(loadFactor))
+        throw new IllegalArgumentException("Illegal load factor: " +
+                                           loadFactor);
+    int capacity = 1;
+    while(capacity < initialCapacity)
+        capacity <<= 1;
+    this.loadFactor = loadFactor;
+    threshold = (int)Math.min(capacity * loadFactor,MAXIMUN_CAPACITY +1);
+    table = new Entry[capacity];
+}
+```
+
+
+```java
+//put操作
+public V put (K key,V value){
+	if(key = null)
+		return putForNullKey(value);
+//计算哈希值
+	int hash = hash(key);
+	int i = indexFor(hash,table.length);
+	for(Entry<K,V> e = table[i];e!=null;e=e.next){
+		Object k;
+		if(e.hash = hash&& ((k=e.key)==key||key.equals(k))){
+            e.value = value;
+            e.recordAccess(this);
+            return oldValue;
+		}
+	}
+	modCount++;
+	addEntry(has,key,value,i);
+	return null;
+}
+```
+
+
+
 
 ##### JDK8
 	new HashMap() 底层没有创建一个长度为16的数组
@@ -902,6 +950,142 @@ Map的主要实现类，线程不安全，但是效率高，可存储任何数�
 	首次调用put()底层创建为16的数组
 	当数组的某一个索引位置的元素,它以链表形式存在的数据个数 > 8,且当数组长度 > 64
 	此时索引位置上的所有数据改为使用红黑树存储
+
+```java
+//属性的赋值，没有创建数组
+public HashMap() {
+        this.loadFactor = DEFAULT_LOAD_FACTOR; // all other fields defaulted
+    }
+```
+
+```java
+//首先判断是否存在table数组，不存在则创建
+ if ((tab = table) == null || (n = tab.length) == 0)
+            n = (tab = resize()).length;
+```
+```java
+//创建数组
+final Node<K,V>[] resize() {
+        Node<K,V>[] oldTab = table;
+        int oldCap = (oldTab == null) ? 0 : oldTab.length;
+        int oldThr = threshold;
+        int newCap, newThr = 0;
+        if (oldCap > 0) {
+            if (oldCap >= MAXIMUM_CAPACITY) {
+                threshold = Integer.MAX_VALUE;
+                return oldTab;
+            }
+            else if ((newCap = oldCap << 1) < MAXIMUM_CAPACITY &&
+                     oldCap >= DEFAULT_INITIAL_CAPACITY)
+                newThr = oldThr << 1; // double threshold
+        }
+        else if (oldThr > 0) // initial capacity was placed in threshold
+            newCap = oldThr;
+        else {               // zero initial threshold signifies using defaults
+            newCap = DEFAULT_INITIAL_CAPACITY;
+            newThr = (int)(DEFAULT_LOAD_FACTOR * DEFAULT_INITIAL_CAPACITY);
+        }
+        if (newThr == 0) {
+            float ft = (float)newCap * loadFactor;
+            newThr = (newCap < MAXIMUM_CAPACITY && ft < (float)MAXIMUM_CAPACITY ?
+                      (int)ft : Integer.MAX_VALUE);
+        }
+        threshold = newThr;
+        @SuppressWarnings({"rawtypes","unchecked"})
+        Node<K,V>[] newTab = (Node<K,V>[])new Node[newCap];
+        table = newTab;
+        if (oldTab != null) {
+            for (int j = 0; j < oldCap; ++j) {
+                Node<K,V> e;
+                if ((e = oldTab[j]) != null) {
+                    oldTab[j] = null;
+                    if (e.next == null)
+                        newTab[e.hash & (newCap - 1)] = e;
+                    else if (e instanceof TreeNode)
+                        ((TreeNode<K,V>)e).split(this, newTab, j, oldCap);
+                    else { // preserve order
+                        Node<K,V> loHead = null, loTail = null;
+                        Node<K,V> hiHead = null, hiTail = null;
+                        Node<K,V> next;
+                        do {
+                            next = e.next;
+                            if ((e.hash & oldCap) == 0) {
+                                if (loTail == null)
+                                    loHead = e;
+                                else
+                                    loTail.next = e;
+                                loTail = e;
+                            }
+                            else {
+                                if (hiTail == null)
+                                    hiHead = e;
+                                else
+                                    hiTail.next = e;
+                                hiTail = e;
+                            }
+                        } while ((e = next) != null);
+                        if (loTail != null) {
+                            loTail.next = null;
+                            newTab[j] = loHead;
+                        }
+                        if (hiTail != null) {
+                            hiTail.next = null;
+                            newTab[j + oldCap] = hiHead;
+                        }
+                    }
+                }
+            }
+        }
+        return newTab;
+    }
+```
+```java
+//存入数据
+final V putVal(int hash, K key, V value, boolean onlyIfAbsent,
+                   boolean evict) {
+        Node<K,V>[] tab; Node<K,V> p; int n, i;
+        if ((tab = table) == null || (n = tab.length) == 0)
+            n = (tab = resize()).length;
+        if ((p = tab[i = (n - 1) & hash]) == null)
+            tab[i] = newNode(hash, key, value, null);
+        else {
+            Node<K,V> e; K k;
+            if (p.hash == hash &&
+                ((k = p.key) == key || (key != null && key.equals(k))))
+                e = p;
+            else if (p instanceof TreeNode)
+                e = ((TreeNode<K,V>)p).putTreeVal(this, tab, hash, key, value);
+            else {
+                for (int binCount = 0; ; ++binCount) {
+                    if ((e = p.next) == null) {
+                        p.next = newNode(hash, key, value, null);
+                        if (binCount >= TREEIFY_THRESHOLD - 1) // -1 for 1st
+                            treeifyBin(tab, hash);
+                        break;
+                    }
+                    if (e.hash == hash &&
+                        ((k = e.key) == key || (key != null && key.equals(k))))
+                        break;
+                    p = e;
+                }
+            }
+            if (e != null) { // existing mapping for key
+                V oldValue = e.value;
+                if (!onlyIfAbsent || oldValue == null)
+                    e.value = value;
+                afterNodeAccess(e);
+                return oldValue;
+            }
+        }
+        ++modCount;
+        if (++size > threshold)
+            resize();
+        afterNodeInsertion(evict);
+        return null;
+    }
+```
+
+
 
 
 ### LinkedHashMap
