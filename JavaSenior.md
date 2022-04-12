@@ -57,7 +57,7 @@ class MyThread2 implements Runnable{
 	当同时有多个线程运行相关联的程序，第一个程序正在执行判断条件，在这时,其他线程也去进行逻辑判断，并且执行，接着线程一判断为true之后,也进行重复执行
 
 ## 同步监视器
-	俗称锁.任何一个类的锁都可以充当锁
+	俗称锁.任何一个类都可以充当锁
 ### 规则
 	多个线程必须共用同一把锁
 ### 优点
@@ -876,6 +876,8 @@ HashSet的子类，在添加数据的同时，每个数据还有两个引用遍�
 
 双列数据,存储具有映射关系 key-value对 的集合
 
+
+
 ![image-20220325190113786](E:\Typora\JavaSenior\image-20220325190113786.png)
 
 ### HashMap
@@ -1161,3 +1163,13 @@ final V putVal(int hash, K key, V value, boolean onlyIfAbsent,
 
 ## 面试题：CurrentHashMap 和 HashTable的异同
 	CurrentHashMap为了在高并发场景下,执行效率更高,使用了分段锁机制。
+
+# 泛型
+	Generic，允许在定义类时通过一个标识表示类中的某个属性的类型，某个方法的返回值及参数类型。这个类型参数将在使用时确定。
+
+
+
+
+
+
+
