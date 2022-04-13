@@ -1189,6 +1189,25 @@ public void testGeneric(){
 
 input and output as streams
 
+## 区分输入输出
+	站在程序(内存)的角度判断
+	输入 读取外部数据(磁盘)到程序中
+	输出 将程序输出到磁盘中
+
+![image-20220413155545879](E:\Typora\JavaSenior\image-20220413155545879.png)
+
+## 流的分类
+    操作数据单位：字节流、字符流
+    数据的流向：输入流、输出流（增加缓冲功能，避免频繁读写硬盘）
+    流的角色：节点流、缓冲流
+
+## 转换流
+	解码：将一个字节的输入流转换为字符的输入流
+	编码：将一个字符的输出流转换为字节的输出流
+
+![image-20220413161013142](E:\Typora\JavaSenior\image-20220413161013142.png)
+
+## 常用类
 
 | 抽象基类     | 节点流           | 缓冲流               |
 | ------------ | ---------------- | -------------------- |
@@ -1257,14 +1276,53 @@ public void testBufferedStreamTest(){
             }
         }
 ```
+## 系统如何识别汉字OR英文
+	GBK:中国的中文编码表升级，融合了更多的中文文字符号。最多两个字节编码,两组相邻的 四个比特,首位都是1的为汉字;所有的文字都用两个字节来表示。
+
+![image-20220413161820187](E:\Typora\JavaSenior\image-20220413161820187.png)
 
 
+## serialVersionUID
+用来表明类的不同版本间的兼容性
 
+### 优点
+	可以将任何实现了Serializable接口的对象转化为字节数据
+	若类的实例变量做了修改，serialVersionUID 可能发生变化。故建议,显式声明
+### 缺点
+	如果让某个对象支持序列化,该类必须实现两个接口之一（Serializable，Externalizable）否则,会抛出NotSerializableException异常
 
-
-
-
-
+## NewIO 2
+	还提供了Files、Paths工具类，Files包含了大量静态的工具方法来操作文件
+	Path相当于替代了file类
+	Paths则包含了两个返回Path的静态工厂方法
+		Paths 类提供的静态 get() 方法用来获取 Path 对象
+		Path get(String first, String … more) : 用于将多个字符串串连成路径
+		Path get(URI uri): 返回指定uri对应的Path路径
+	Path常用方法
+		String toString() : 返回调用 Path 对象的字符串表示形式
+		startsWith(String path) : 判断是否以 path 路径开始
+		endsWith(String path) : 判断是否以 path 路径结束
+		isAbsolute() : 判断是否是绝对路径
+		getParent() : 返回Path对象包含整个路径，不包含 Path 对象指定的文件路径
+ 		getRoot() :返回调用 Path 对象的根路径
+		getFileName() : 返回与调用 Path 对象关联的文件名
+		getNameCount() : 返回Path 根目录后面元素的数量
+		getName(int idx) : 返回指定索引位置 idx 的路径名称
+		toAbsolutePath() : 作为绝对路径返回调用 Path 对象
+		resolve(Path p) : 合并两个路径，返回合并后的路径对应的Path对象
+		toFile() : 将Path转化为File类的对象    
+	Files常用方法
+		exists(Path path, LinkOption … opts) : 判断文件是否存在
+		isDirectory(Path path, LinkOption … opts) : 判断是否是目录
+ 		isRegularFile(Path path, LinkOption … opts) : 判断是否是文件
+		isHidden(Path path) : 判断是否是隐藏文件
+		isReadable(Path path) : 判断文件是否可读
+		isWritable(Path path) : 判断文件是否可写
+		notExists(Path path, LinkOption … opts) : 判断文件是否不存在
+	Files常用方法：用于操作内容
+		newByteChannel(Path path, how) : 获取与指定文件的连接，how:打开方式   		   newDirectoryStream(Path path) : 打开 path 指定的目录 
+		newInputStream(Path path, OpenOption…how):获取 InputStream 对象 
+		newOutputStream(Path path, OpenOption…how):获取 OutputStream 对象
 
 
 
