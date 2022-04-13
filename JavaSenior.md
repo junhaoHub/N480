@@ -1165,7 +1165,110 @@ final V putVal(int hash, K key, V value, boolean onlyIfAbsent,
 	CurrentHashMap为了在高并发场景下,执行效率更高,使用了分段锁机制。
 
 # 泛型
-	Generic，允许在定义类时通过一个标识表示类中的某个属性的类型，某个方法的返回值及参数类型。这个类型参数将在使用时确定。
+	Generic,在定义类时通过标识类中的某个属性的类型,某个方法的返回值及参数类型。这个类型参数将在使用时确定。
+
+## 示例代码
+```java
+public void testGeneric(){
+    ArrayList<Integer> objects = new ArrayList<Integer>();
+    objects.add(14);
+    objects.add(74);
+    objects.add(94);
+    objects.add(78);
+    //objects.add("深田");
+
+    //方式二
+    Iterator<Integer> iterator = objects.iterator();
+    while (iterator.hasNext()){
+        System.out.println(iterator.next());
+    }
+}
+```
+
+# IO流
+
+input and output as streams
+
+
+| 抽象基类     | 节点流           | 缓冲流               |
+| ------------ | ---------------- | -------------------- |
+| InputStream  | FileInputStream  | BufferedInputStream  |
+| OutputStream | FileOutputStream | BufferedOutputStream |
+| Reader       | FileReader       | BufferedReader       |
+| Writer       | FileWriter       | BufferedWriter       |
+
+注：InputStream用于读取二进制数据，Reader用于读取文本数据
+
+## 常用方法
+
+	Windows和Dos系统默认使用“\”
+	Unix和Linux用“/”表示
+	File.separator:不同系统的默认分隔符
+	List():获取指定目录下的文件和文件夹
+	listFiles():获取指定目录下的文件 File 类
+	canRead():是否可读
+	canWrite():是否可写
+	createNewFile():创建文件。若文件存在，则不创建，返回false
+	mkdir():创建文件目录
+	mkdirs():创建文件目录，如果上级没有，则一并创建
+	delete():删除文件，Java删除文件不走回收站
+
+## 示例代码
+```java
+@Test
+public void testBufferedStreamTest(){
+	//创建File实例
+	File srcFile = new File("911Mothers_2010W-480p.mp4");
+	File destFile = new File("911Mothers_2010W-481p.mp4");
+	//创建读文件实例
+	FileInputStream fileInputStream = null;
+	FileOutputStream fileOutputStream = null;
+	BufferedInputStream bufferedInputStream = null;
+	BufferedOutputStream bufferedOutputStream = null;
+	try {
+	fileInputStream = new FileInputStream(srcFile);
+	bufferedInputStream = new BufferedInputStream(fileInputStream);
+	//创建写文件实例
+	fileOutputStream = new FileOutputStream(destFile);
+	bufferedOutputStream = new BufferedOutputStream(fileOutputStream);
+	//读取的方法
+	int read;
+	byte[] buffer = new byte[1024];
+	while ((read=bufferedInputStream.read(buffer))!=-1){
+	//写入的方法
+	bufferedOutputStream.write(buffer,0,read);
+	}
+		} catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+
+            //关闭缓冲流
+            try {
+                if (bufferedInputStream!=null)
+                bufferedInputStream.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            try {
+                if (bufferedInputStream!=null)
+                bufferedOutputStream.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+```
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
