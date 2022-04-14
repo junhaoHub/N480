@@ -1189,7 +1189,7 @@ public void testGeneric(){
 
 input and output as streams
 
-## 区分输入输出
+## 输入输出
 	站在程序(内存)的角度判断
 	输入 读取外部数据(磁盘)到程序中
 	输出 将程序输出到磁盘中
@@ -1198,7 +1198,7 @@ input and output as streams
 
 ## 流的分类
     操作数据单位：字节流、字符流
-    数据的流向：输入流、输出流（增加缓冲功能，避免频繁读写硬盘）
+    数据的流向：输入流、输出流（增加缓冲功能,避免频繁读写硬盘）
     流的角色：节点流、缓冲流
 
 ## 转换流
@@ -1292,7 +1292,7 @@ public void testBufferedStreamTest(){
 	如果让某个对象支持序列化,该类必须实现两个接口之一（Serializable，Externalizable）否则,会抛出NotSerializableException异常
 
 ## NewIO 2
-	还提供了Files、Paths工具类，Files包含了大量静态的工具方法来操作文件
+	还提供了Files、Paths工具类,Files包含了大量静态的工具方法来操作文件
 	Path相当于替代了file类
 	Paths则包含了两个返回Path的静态工厂方法
 		Paths 类提供的静态 get() 方法用来获取 Path 对象
@@ -1304,7 +1304,7 @@ public void testBufferedStreamTest(){
 		endsWith(String path) : 判断是否以 path 路径结束
 		isAbsolute() : 判断是否是绝对路径
 		getParent() : 返回Path对象包含整个路径，不包含 Path 对象指定的文件路径
- 		getRoot() :返回调用 Path 对象的根路径
+		getRoot() :返回调用 Path 对象的根路径
 		getFileName() : 返回与调用 Path 对象关联的文件名
 		getNameCount() : 返回Path 根目录后面元素的数量
 		getName(int idx) : 返回指定索引位置 idx 的路径名称
@@ -1314,7 +1314,7 @@ public void testBufferedStreamTest(){
 	Files常用方法
 		exists(Path path, LinkOption … opts) : 判断文件是否存在
 		isDirectory(Path path, LinkOption … opts) : 判断是否是目录
- 		isRegularFile(Path path, LinkOption … opts) : 判断是否是文件
+		isRegularFile(Path path, LinkOption … opts) : 判断是否是文件
 		isHidden(Path path) : 判断是否是隐藏文件
 		isReadable(Path path) : 判断文件是否可读
 		isWritable(Path path) : 判断文件是否可写
@@ -1324,13 +1324,74 @@ public void testBufferedStreamTest(){
 		newInputStream(Path path, OpenOption…how):获取 InputStream 对象 
 		newOutputStream(Path path, OpenOption…how):获取 OutputStream 对象
 
+# 网络编程
+
+![image-20220413194846430](E:\Typora\JavaSenior\image-20220413194846430.png)
+
+##  IP
+Internet Protocol 网络协定
+
+### IPV4 
+	以点分十进制表示,如192.168.0.1
+	4个字节组成,4个0-255,大概42亿,30亿都在北美,亚洲4亿.
+
+### IPV6
+	1ffe:2201:3401:4280:58ff:6e4d:7b39:8984
+	128位(16个字节),写成8个无符号整数,每个整数用四个十六进制位表示
+
+### 公网地址(万维网使用)
+	公共IP地址范围为1到191
+### 私有地址(局域网使用)
+	192.168.开头的就是私有址址
+	范围即为192.168.0.0--192.168.255.255,专门为组织机构内部使用
+
+## 进程标识符
+Process Identification
+
+![image-20220413194926776](E:\Typora\JavaSenior\image-20220413194926776.png)
+
+![image-20220413195731366](E:\Typora\JavaSenior\image-20220413195731366.png)
+
+![image-20220413201522733](E:\Typora\JavaSenior\image-20220413201522733.png)
+
+![image-20220413201553688](E:\Typora\JavaSenior\image-20220413201553688.png)
+
+# 反射
+
+	一个类只有一个Class对象,这个对象就像一面镜子,透过这个镜子看到类的结构,我们形象的称为反射
 
 
+## 调用private构造器
+    Class clazz =Person.class;
+    Constructor cons1 = clazz.getDeclaredConstructor(String.class);
+    cons1.setAccessible(true);
+    Person p1 =（Person）cons1.newInstance（“Jerry”）;
 
+## 调用private属性
+    Field name =clazz.getDeclaredField（“name”）;
+    name.setAccessible（true）;
+    name.set（p1，“Hanmeimei”）;
 
+## 调用 private 方法
+	Method method = clazz.getDeclaredMethod（“showNation”，String.class）;
+	method.setAccessible（true）；
+	method.invoke（p1,”中国”）; //相当于p1.method（）
 
+## 反射的优点
+	在调用公共结构时，不确定new哪个类的对象，就使用反射的机制
+	当login的时候获取url，这时服务已经跑起来了，就创建相应类的的对象
+	当register的时候获取url，这时服务已经跑起来了，就创建Register的对象	
+	常用clazz.newInstance();来进行实例化
+	Person obj = clazz.newInstance();
+	System.out.println(obj);
 
+## 获取Class实例方式
 
-
-
-
+### 调用运行时类的属性
+	Class clazz1 =Person.class
+### 通过运行时类的对象
+    Person p1=new Person（）
+    Class clazz2=p1.getClass（）
+### 调用Class的静态方法
+    Class clazz3=Class.forName（String classPath）
+    使用Class的静态方法比较多
