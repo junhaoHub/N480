@@ -1236,15 +1236,16 @@ input and output as streams
 ```java
 @Test
 public void testBufferedStreamTest(){
-	//创建File实例
+	//1.创建File实例,指明读入和写出的文件
 	File srcFile = new File("911Mothers_2010W-480p.mp4");
 	File destFile = new File("911Mothers_2010W-481p.mp4");
-	//创建读文件实例
+	
 	FileInputStream fileInputStream = null;
 	FileOutputStream fileOutputStream = null;
 	BufferedInputStream bufferedInputStream = null;
 	BufferedOutputStream bufferedOutputStream = null;
 	try {
+    //创建读文件实例
 	fileInputStream = new FileInputStream(srcFile);
 	bufferedInputStream = new BufferedInputStream(fileInputStream);
 	//创建写文件实例
@@ -1339,10 +1340,10 @@ Internet Protocol 网络协定
 	1ffe:2201:3401:4280:58ff:6e4d:7b39:8984
 	128位(16个字节),写成8个无符号整数,每个整数用四个十六进制位表示
 
-### 公网地址(万维网使用)
-	公共IP地址范围为1到191
-### 私有地址(局域网使用)
-	192.168.开头的就是私有址址
+### 公网地址
+	公共IP地址范围为1到191,万维网使用
+### 私有地址
+	192.168.开头的就是私有址址,局域网使用
 	范围即为192.168.0.0--192.168.255.255,专门为组织机构内部使用
 
 ## 进程标识符
@@ -1385,13 +1386,15 @@ Process Identification
 	Person obj = clazz.newInstance();
 	System.out.println(obj);
 
-## 获取Class实例方式
-
+## 实例化类
 ### 调用运行时类的属性
-	Class clazz1 =Person.class
-### 通过运行时类的对象
-    Person p1=new Person（）
-    Class clazz2=p1.getClass（）
-### 调用Class的静态方法
-    Class clazz3=Class.forName（String classPath）
-    使用Class的静态方法比较多
+	Class clazz1 = Person.class
+### 调用运行时类的对象的方法
+    Person p1 = new Person（）
+    Class clazz2 = p1.getClass（）
+### 调用Class的静态方法(常用)
+    Class clazz3 = Class.forName（String classPath）
+
+### 使用类的加载器：ClassLoader
+	ClassLoader classLoader = ReflectionTest.class.getClassLoader();
+	Class clazz4 = classLoader.loadClass("com.junhao.java.Person");
