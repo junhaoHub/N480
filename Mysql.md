@@ -1,9 +1,66 @@
 # 数据库概述
 ## Why
-	能够存储一些数据，并把数据保存到可掉电式存储设备中以供之后使用
+	能够存储一些数据,并把数据保存到可掉电式存储设备中以供之后使用
 ## What
 	将内存中的数据存储在关系型数据库中
+## SQL
+	结构化查询语言(Structured Query Language),专门用来与数据库通信的语言
+## DB
+	数据库(Database),即存储数据的“仓库”,其本质是一个文件系统。它保存了一系列有组织的数据
+
+![image-20220416165547206](E:\Typora\Mysql\image-20220416165547206.png)
+
+## DBMS
+
+	数据库管理系统(Database Management System)
+	是一种操纵和管理数据库的大型软件,用于建立、使用和维护数据库,对数据库进行统一管理和控制。用户通过数据库管理系统访问数据库中表内的数据。
+
+![image-20220416165623904](E:\Typora\Mysql\image-20220416165623904.png)
+
+## The Relationship between DB & DBMS
+
+![image-20220416161450268](E:\Typora\Mysql\image-20220416161450268.png)
+
+## Common Databases
+
+![image-20220416165008887](E:\Typora\Mysql\image-20220416165008887.png)
+
+## RDBMS
+	最古老的数据库类型,关系型数据库模型是把复杂的数据结构归结为简单的二元关系(即二维表格形式)。
+
+
+## Non-RDBMS
+	非关系型数据库,可看成传统关系型数据库的功能的阉割版本, 基于键值对存储数据,不需要经过SQL层的解析,性能非常高。同时,通过减少不常用的功能,进一步提高性能
+
+### Categories
+#### 键值型数据库
+	键值型数据库通过 Key-Value 键值的方式来存储数据,其中 Key 和 Value 可以是简单的对象,也可以是复杂的对象。Key 作为唯一的标识符,优点是查找速度快,在这方面明显优于关系型数据库,缺点是无法像关系型数据库一样使用条件过滤(如 WHERE),如果你不知道去哪里找数据,就要遍历所有的键,这就会消耗大量的计算。键值型数据库典型的使用场景是作为 内存缓存。Redis 是最流行的键值型数据库。
+
+![image-20220416173538989](E:\Typora\Mysql\image-20220416173538989.png)
+
+#### 文档型数据库
+	此类数据库可存放并获取文档，可以是XML、JSON等格式。在数据库中文档作为处理信息的基本单位，一个文档就相当于一条记录。文档数据库所存放的文档，就相当于键值数据库所存放的“值”。MongoDB是最流行的文档型数据库。
+
+#### 搜索引擎数据库
+	虽然关系型数据库采用了索引提升检索效率，但是针对全文索引效率却较低。搜索引擎数据库是应用在搜索引擎领域的数据存储形式，由于搜索引擎会爬取大量的数据，并以特定的格式进行存储，这样在检索的时候才能保证性能最优。核心原理是“倒排索引”。
+	典型产品：Solr、Elasticsearch、Splunk 等。
+
+####  列式数据库
+	列式数据库是相对于行式存储的数据库，Oracle、MySQL、SQL Server 等数据库都是采用的行式存储（Row-based）,而列式数据库是将数据按照列存储到数据库中，这样做的好处是可以大量降低系统的I/O，适合于分布式文件系统，不足在于功能相对有限。典型产品:HBase。
+
+![image-20220416174352634](E:\Typora\Mysql\image-20220416174352634.png)
+
+#### 图形数据库
+	是一种存储图形关系的数据库。它利用了图这种数据结构存储了实体（对象）之间的关系。关系型数据用于存储明确关系的数据，但对于复杂关系的数据存储却有些力不从心。如社交网络中人物之间的关系，如果用关系型数据库则非常复杂，用图形数据库将非常简单。典型产品:Neo4J、InfoGrid等。
+
+![image-20220416174604905](E:\Typora\Mysql\image-20220416174604905.png)
+
+
+
+
+
 # 环境搭建
+
 # SELECT
 ## 基本的SELECT语句
 ## 运算符
@@ -64,7 +121,7 @@ create user junhao identified by '123456';
 grant select,insert,delete,update on [TABLENAME].* to junhao@localhost identified by '123456';
 ```
 # 索引
-利用数据结构，将数据排好序，以帮助Mysql高效获取
+利用数据结构,将数据排好序,以帮助Mysql高效获取
 
 	存储结构划分 —— B+ Tree索引、Hash索引、红黑树
 	应用层次划分 —— 普通索引、唯一索引、主键索引、复合索引
@@ -110,30 +167,30 @@ grant select,insert,delete,update on [TABLENAME].* to junhao@localhost identifie
 	19 和 30 就发生冲突了
 	使用散列函数H（K）在大小为M的表中插入密钥K时：
 	设置 indx = H（K）
-	如果表位置indx已经包含密钥，则无需插入它
-	否则，如果表位置indx为空，则在其中插入键
+	如果表位置indx已经包含密钥,则无需插入它
+	否则,如果表位置indx为空,则在其中插入键
 	其他碰撞。设置 indx =（indx + 1）mod M.
-	如果 indx == H（K），则表已满！就只能做哈希表的扩容了
-	因此，线性探测基本上是在发生碰撞时对空槽进行线性搜索。
+	如果 indx == H（K）,则表已满！就只能做哈希表的扩容了
+	因此,线性探测基本上是在发生碰撞时对空槽进行线性搜索。
 
 
 ### R-B Tree
-红黑树，又称自平衡二叉查找树，是在计算机科学中用到的一种数据结构，典型是实现关联数组
+红黑树,又称自平衡二叉查找树,是在计算机科学中用到的一种数据结构,典型是实现关联数组
 #### 规则
 	根节点必为黑色
 	节点分为红色或者黑色
-	叶子节点都为黑色，且为null
+	叶子节点都为黑色,且为null
 
 ![image-20220316102956191](E:\Typora\Mysql\image-20220316102956191.png)
 
 
-	优点：红黑树能够以O(log2(N))的时间复杂度进行搜索、插入、删除操作。此外，任何不平衡都会在3次旋转之内解决。
+	优点：红黑树能够以O(log2(N))的时间复杂度进行搜索、插入、删除操作。此外,任何不平衡都会在3次旋转之内解决。
 	缺点：在面对数据量庞大的数据时,无法判断其层数,会造成大量的IO
 
 
 # 存储引擎
 ## Myisam
-只支持表锁，高并发场景下会出现严重的问题
+只支持表锁,高并发场景下会出现严重的问题
 
 ![image-20220316105355803](E:\Typora\Mysql\image-20220316105355803.png)
 
@@ -142,7 +199,7 @@ grant select,insert,delete,update on [TABLENAME].* to junhao@localhost identifie
 	.MYI_数据库表的索引文件
 
 ## InnoDB
-按照B+树组织的一个索引结构文件，支持行锁
+按照B+树组织的一个索引结构文件,支持行锁
 
 ![image-20220316105811214](E:\Typora\Mysql\image-20220316105811214.png)
 
@@ -152,20 +209,20 @@ grant select,insert,delete,update on [TABLENAME].* to junhao@localhost identifie
 
 
 ## 聚集索引
-叶子节点包含了完整的数据结构，被Innodb所应用
+叶子节点包含了完整的数据结构,被Innodb所应用
 ![image-20220310193253048](E:\Typora\Mysql\image-20220310193253048.png)
 
 ## 面试题：B+树是如何有效查询的
 	以查询25为例
 	第一次磁盘I/O:访问根结点[15、56],发现25小于 [15、56] 中的 56,则访问根结点的第一个孩子结点
 	第二次磁盘I/O:访问根结点[15、20、49],发现25大于20且小于49,则访问当前结点的第三个孩子结点 [20、30].
-	第三次磁盘I/O:访问叶子结点 [20、30],顺序遍历结点内部，找到要查找的元素 25.
+	第三次磁盘I/O:访问叶子结点 [20、30],顺序遍历结点内部,找到要查找的元素 25.
 
 
 
 ## 稀疏索引
 
-索引文件和数据文件是分离的，被MyISAM所应用
+索引文件和数据文件是分离的,被MyISAM所应用
 ![image-20220310204158998](E:\Typora\Mysql\image-20220310204158998.png)
 
 ## 面试题：为什么推荐用自增主键做索引
@@ -199,13 +256,13 @@ select id,age from user where name = 'Bill'
 ![image-20220316164127450](E:\Typora\Mysql\image-20220316164127450.png)
 
 ## 最左前缀优化原则
-	mysql会一直向右匹配直到遇到范围查询（>、<、between、like）就停止匹配,开始在这个范围进行update、select.比如a=3 and b=4 and c>5 and d=6 如果建立（a、b、c、d）顺序的索引,d是用不到索引的，如果建立(a、b、d、c)的索引则都可以用到,a、b、d的顺序可以任意调整。
+	mysql会一直向右匹配直到遇到范围查询（>、<、between、like）就停止匹配,开始在这个范围进行update、select.比如a=3 and b=4 and c>5 and d=6 如果建立（a、b、c、d）顺序的索引,d是用不到索引的,如果建立(a、b、d、c)的索引则都可以用到,a、b、d的顺序可以任意调整。
 
 
-	=和in可以乱序，比如a=1 and b=2 and c=3建立（a、b、c）索引可以任意顺序，mysql的查询优化器会帮你优化成索引可以识别的形式
+	=和in可以乱序,比如a=1 and b=2 and c=3建立（a、b、c）索引可以任意顺序,mysql的查询优化器会帮你优化成索引可以识别的形式
 
 # 分析器（Explain）
-可以模拟优化器执行SQL语句，分析你的查询语句或是结构的性能瓶颈
+可以模拟优化器执行SQL语句,分析你的查询语句或是结构的性能瓶颈
 
 ```mysql
 explain extended select * from film where id =1;
@@ -229,7 +286,7 @@ explain extended select * from film where id =1;
 	查询的语句所关联的表
 
 ## type
-这一列表示Mysql决定如何查找表中的行，查找数据行记录的大概范围,依次从优到差分别是
+这一列表示Mysql决定如何查找表中的行,查找数据行记录的大概范围,依次从优到差分别是
 
 	system>const>eq_ref>ref>range>index>ALL
 	index-扫描全索引就能拿到结果,一般是扫描某个二级索引
@@ -237,11 +294,11 @@ explain extended select * from film where id =1;
 
 
 ## key_len
-用到的索引长度，当用and关键字时，索引长度会随着条件而叠加
+用到的索引长度,当用and关键字时,索引长度会随着条件而叠加
 ![image-20220312092841677](E:\Typora\Mysql\image-20220312092841677.png)
 
 	char(n)-n字节长度
-	varchar-如果是ntf-8，则长度是3n+2字节，加的2字节用来存储字符串长度,n是varchar自定义的长度
+	varchar-如果是ntf-8,则长度是3n+2字节,加的2字节用来存储字符串长度,n是varchar自定义的长度
 	tinyint-1字节
 	smallint-2字节
 	int-4字节
@@ -255,8 +312,8 @@ explain extended select * from film where id =1;
 	按主键或唯一键读取,将一个主键放到 where 后面作为条件查询,优化器就能把这次查询优化转化为一个常量(const)
 
 ## extra
-	当value为Using filesort时，将用外部排序，这种情况下需要考虑使用索引优化
-	当value为Using index时，建立了索引
+	当value为Using filesort时,将用外部排序,这种情况下需要考虑使用索引优化
+	当value为Using index时,建立了索引
 
 ## 面试题：mysql在什么时候会选择使用全表索引
 
@@ -264,25 +321,25 @@ explain extended select * from film where id =1;
 	当范围查询的效率没有全表查询的效率高时
 	is null,is not null
 	like以通配符开头('$abc...')('%abc...')
-	少用or或in，用它查询时，mysql不一定使用索引
+	少用or或in,用它查询时,mysql不一定使用索引
 
 ## 索引总结图
 假设index(a、b、c)
 
-| Where语句                                        | 索引是否被使用                        |
-| ------------------------------------------------ | ------------------------------------- |
-| where a= 3                                       | Y，使用到a                            |
-| where a=3 and b=5                                | Y，使用到a，b                         |
-| where a= 3 and b=5 and c=4                       | Y， 使用到a,  b,  c                   |
-| where b=3 或者 where b=3 and c=4  或者 where c=4 | N                                     |
-| where a=3 and c=5                                | 使用到a，但是c不可以， b中间断了      |
-| where a=3 and b>4 and c=5                        | 使用到a和b，c不能用在范围之后， b断了 |
-| where a=3 and b like 'kk%' and c= 4              | Y,  使用到a, b, c                     |
-| where a=3 and b like '%kk' and  c=4              | Y,  只用到a                           |
-| wherea=3 and b like '%kk%' and c=4               | Y, 只用到a                            |
-| wherea=3 and b like 'k%kk%' andc=4               | Y,使用到a,b,c                         |
+| Where语句                                        | 索引是否被使用                      |
+| ------------------------------------------------ | ----------------------------------- |
+| where a= 3                                       | Y,使用到a                           |
+| where a=3 and b=5                                | Y,使用到a,b                         |
+| where a= 3 and b=5 and c=4                       | Y, 使用到a,  b,  c                  |
+| where b=3 或者 where b=3 and c=4  或者 where c=4 | N                                   |
+| where a=3 and c=5                                | 使用到a,但是c不可以, b中间断了      |
+| where a=3 and b>4 and c=5                        | 使用到a和b,c不能用在范围之后, b断了 |
+| where a=3 and b like 'kk%' and c= 4              | Y,  使用到a, b, c                   |
+| where a=3 and b like '%kk' and  c=4              | Y,  只用到a                         |
+| wherea=3 and b like '%kk%' and c=4               | Y, 只用到a                          |
+| wherea=3 and b like 'k%kk%' andc=4               | Y,使用到a,b,c                       |
 
-like KK%相当于=常量，%KK和%KK%相当于范围
+like KK%相当于=常量,%KK和%KK%相当于范围
 
 
 
@@ -300,7 +357,7 @@ Sql的底层是B+树
 ## Store层
 	存储引擎层负责数据的存储和提取
 ## 连接器
-连接到这个数据库上，这时候接待你的就是连接器。连接器负责跟客户端建立连接、获取权限、维持和管理连接
+连接到这个数据库上,这时候接待你的就是连接器。连接器负责跟客户端建立连接、获取权限、维持和管理连接
 ```
 [root@192 ~]# mysql ‐h host[数据库地址] ‐u root[用户] ‐p root[密码] ‐P 3306
 ```
@@ -317,9 +374,9 @@ Sql的底层是B+树
 ## 优化器
 	优化器是在表里面有多个索引的时候,决定使用哪个索引
 ## 执行器
-	开始执行的时候,要先判断一下你对这个表 T 有没有执行查询的权限，如果没有，就会返回没有权限的错误。
+	开始执行的时候,要先判断一下你对这个表 T 有没有执行查询的权限,如果没有,就会返回没有权限的错误。
 # bin-log归档
-	删库是不需要跑路的，因为我们的SQL执行时，会将sql语句的执行逻辑记录在我们的bin-log当中
+	删库是不需要跑路的,因为我们的SQL执行时,会将sql语句的执行逻辑记录在我们的bin-log当中
 ## 特点
 	Binlog在MySQL的Server层实现（引擎共用）
 	Binlog为逻辑日志,记录的是一条语句的原始逻辑
@@ -352,12 +409,12 @@ select * from employees  where name >'LeiLei' AND  age =22 AND position = 'manag
 ## 索引下推
 	在索引遍历过程中,对索引中包含的所有字段先做判断,过滤掉不符合条件的记录后再回表,可以有效的减少回表次数。
 
-### 面试题：为什么范围查找没有用索引下推，而like却能够用到
+### 面试题：为什么范围查找没有用索引下推,而like却能够用到
 	Mysql认为范围查找过滤的结果集更大,like KK%在绝大数情况来看,过滤后的结果集较小。                
 
 ## Mysql优化器
 ```mysql
-#开启trace,用完要关闭，不然浪费性能
+#开启trace,用完要关闭,不然浪费性能
 set session optimizer_trace="enabled=on",end_markers_in_json=on; 
 #分析执行计划
 select * from employees where name > 'a' order by position;
@@ -394,7 +451,7 @@ Case4：
 
 ![image-20220313120531795](E:\Typora\Mysql\image-20220313120531795.png)
 
-和Case 3中explain的执行结果一样，但是出现了Using filesort，因为索引的创建顺序为 name,age,position，但是排序的时候age和position颠倒位置了。
+和Case 3中explain的执行结果一样,但是出现了Using filesort,因为索引的创建顺序为 name,age,position,但是排序的时候age和position颠倒位置了。
 
 
 
@@ -414,13 +471,13 @@ Case7:
 
 ![image-20220313121132041](E:\Typora\Mysql\image-20220313121132041.png)
 
-	对于排序来说，多个相等条件也是范围查询,故产生了Using filesort
+	对于排序来说,多个相等条件也是范围查询,故产生了Using filesort
 
 Case8：
 
 ![image-20220313121312683](E:\Typora\Mysql\image-20220313121312683.png)
 
-	当使用*进行匹配时，此时并没有索引，故可以使用覆盖索引进行优化
+	当使用*进行匹配时,此时并没有索引,故可以使用覆盖索引进行优化
 
 Case8解决方案：
 
@@ -466,7 +523,7 @@ SET GLOBAL long_query.time = 1
 	代码先行,索引后上,等到主体业务功能开发完毕,把涉及到该表相关sql都要拿出来分析之后再建立索引。
 
 
-	联合索引尽量覆盖条件，设计一个或者两三个联合索引(尽量少建单值索引)，让每一个联合索引都尽量去包含sql语句里的where、order by、group by的字段，还要确保这些联合索引的字段顺序尽量满足sql查询的最左前缀原则。
+	联合索引尽量覆盖条件,设计一个或者两三个联合索引(尽量少建单值索引),让每一个联合索引都尽量去包含sql语句里的where、order by、group by的字段,还要确保这些联合索引的字段顺序尽量满足sql查询的最左前缀原则。
 
 
 	不要在小基数字段上建立索引,索引基数是指这个字段在表里总共有多少个不同的值,比如一张表总共100万行记录,其中有性别字段,其值不是男就是女,那么该字段的基数就是2
@@ -475,20 +532,20 @@ SET GLOBAL long_query.time = 1
 
 
 	对于这种varchar(255)的大字段可能会比较占用磁盘空间,可以稍微优化下,比如针对这个字段的前20个字符建立索引,就是说,对这个字段里的每个值的前20个字符放在索引树里,类似于 KEY index(name(20),age,position)。
-	此时你在where条件里搜索的时候，如果是根据name字段来搜索，那么此时就会先到索引树里根据name字段的前20个字符去搜索，定位到之后前20个字符的前缀匹配的部分数据之后，再回到聚簇索引提取出来完整的name字段值进行比对。
+	此时你在where条件里搜索的时候,如果是根据name字段来搜索,那么此时就会先到索引树里根据name字段的前20个字符去搜索,定位到之后前20个字符的前缀匹配的部分数据之后,再回到聚簇索引提取出来完整的name字段值进行比对。
 	但是假如你要是order by name,那么此时你的name因为在索引树里仅仅包含了前20个字符,所以这个排序是没法用上索引的,group by也是同理。所以这里大家要对前缀索引有一个了解。
 
 
-	where与order by冲突时优先where,一般这种时候往往都是让where条件去使用索引来快速筛选出来一部分指定的数据,接着再进行排序。因为大多数情况基于索引进行where筛选往往可以最快速度筛选出你要的少部分数据，然后做排序的成本可能会小很多。
+	where与order by冲突时优先where,一般这种时候往往都是让where条件去使用索引来快速筛选出来一部分指定的数据,接着再进行排序。因为大多数情况基于索引进行where筛选往往可以最快速度筛选出你要的少部分数据,然后做排序的成本可能会小很多。
 
 ## 分页查询优化
-当数据非常大的情况下，如何优化
+当数据非常大的情况下,如何优化
 
 ### 根据主键排序的
 ```mysql
 # 优化前
 select * from employees limit 90000,5;
-# 优化后，改写后的SQL走了索引，条件:需要主键连续，主键不能够被删除或增加
+# 优化后,改写后的SQL走了索引,条件:需要主键连续,主键不能够被删除或增加
 select * from employees where id > 90000 limit 5;
 ```
 
@@ -507,8 +564,8 @@ Explain select * from t1 inner join t2 on t1.a = t2.a
 	t1 10000rows,t2 100rows.先从t2表拿1row记录,再去t1表联合查询一次,因为t1表是索引,在索引树上搜索,最多搜索3次,就扫到了叶子结点,拿出来数据的时候遍历了一次,t2总共一百次联合查询t1,因为t1走了索引,故查询了100(t2)+100(t1)=200行.
 
 #### 对于关联sql的优化
-	关联字段加索引，让mysql做join操作时尽量选择NLJ算法
-	小表驱动大表，如果明确知道那张表是小表，可以用straight_join固定连接驱动方式
+	关联字段加索引,让mysql做join操作时尽量选择NLJ算法
+	小表驱动大表,如果明确知道那张表是小表,可以用straight_join固定连接驱动方式
 ```mysql
 #mysql选择t2作为驱动表
 select * from t2 straight_join t1 on t2.a;
@@ -546,7 +603,7 @@ EXPLAIN select * from t1 inner join t2 on t1.b = t2.b;
 	而对于有索引的算法,则可以优先考虑NLJ.
 
 ## IN
-当B表的数据集小于A表时，in优先于exists
+当B表的数据集小于A表时,in优先于exists
 ```mysql
 select * from A where id in (select id from B)
 
@@ -557,7 +614,7 @@ for(select id  from B ){
 ```
 
 ## Exists
-当B表的数据集大于A表时，exists优先于in
+当B表的数据集大于A表时,exists优先于in
 ```mysql
 select * from A where exists (select 1 from B where B.id = A.id)
 
@@ -571,7 +628,7 @@ select * from A where exists (select 1 from B where B.id = A.id)
 
 ## Count
 ```mysql
-#临时关闭mysql查询优化，为了查看sql多次执行的真实时间
+#临时关闭mysql查询优化,为了查看sql多次执行的真实时间
 set global query_cache_size=0;
 set global query_cache_type=0;
 
@@ -600,11 +657,11 @@ show tables status like 'employees';
 ### 将总数维护到Redis里
 	插入或删除表数据行的时候同时维护redis里表总行数key的计数值（用incr或decr命令）
 ### 增加数据库计数表
-	插入或删除表数据行的时候同时维护计数表，让他们在同一个事务里操作
+	插入或删除表数据行的时候同时维护计数表,让他们在同一个事务里操作
 
 
 # 锁机制
-将复杂的的多表连接交给java，单表交给mysql，它的空间很宝贵
+将复杂的的多表连接交给java,单表交给mysql,它的空间很宝贵
 
 ## 分类
 ### 性能
@@ -615,12 +672,12 @@ select * from t1 where version =1;
 	悲观锁,性能较差
 ### 操作类型
 	读锁 和 写锁 都属于悲观锁
-	读锁（共享锁，S（Shared））:针对同一份数据，多个读操作可以同时进行而不会互相影响
-	写锁（排他锁，X（eXcusive））:当前写操作没有完成前，它会阻断其他写锁和读锁
+	读锁（共享锁,S（Shared））:针对同一份数据,多个读操作可以同时进行而不会互相影响
+	写锁（排他锁,X（eXcusive））:当前写操作没有完成前,它会阻断其他写锁和读锁
 ### 操作粒度
 #### 行锁
-	开销大，加锁慢，会出现死锁;锁定粒度大,并发度高，锁冲突的概率最低，并发度最高。
-	读锁会阻塞写，但是不会阻塞读。而写锁则会把读和写都阻塞。
+	开销大,加锁慢,会出现死锁;锁定粒度大,并发度高,锁冲突的概率最低,并发度最高。
+	读锁会阻塞写,但是不会阻塞读。而写锁则会把读和写都阻塞。
 
 
 #### 表锁
@@ -633,7 +690,7 @@ show open tables;
 unlock tables;
 ```
 ## 间隙锁
-	在Session_1下面执行 update account set name = "zhuge" where id > 8 and id < 18;则其他Session 没法在这个范围包含的所有行记录以及行记录所在的间隙里插入或删除任何数据，间隙锁是在可重复读隔离级别下才能生效。
+	在Session_1下面执行 update account set name = "zhuge" where id > 8 and id < 18;则其他Session 没法在这个范围包含的所有行记录以及行记录所在的间隙里插入或删除任何数据,间隙锁是在可重复读隔离级别下才能生效。
 
 ## 临键锁
 	行锁与间隙锁的组合
