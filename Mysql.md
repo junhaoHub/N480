@@ -114,7 +114,7 @@
 ## 登录mysql
 	E:\mysql-5.7.20-winx64\bin>mysql -u root -p
 ## 设置用户密码
-	mysql> SET PASSWORD = '123';
+	mysql> SET PASSWORD = '123456';
 ## 残余文件的清理
 	如果再次安装不成功,可以卸载后对残余文件进行清理后再安装。
 	服务目录:mysql服务的安装目录
@@ -130,6 +130,72 @@ HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\MySQL
 ```
 ## 删除环境变量配置
 	找到path环境变量,将其中关于mysql的环境变量删除,切记不要全部删除。
+
+## Mysql演示使用
+### 查看数据库
+
+![image-20220420195126343](E:\Typora\Mysql\image-20220420195126343.png)
+
+	“information_schema”是 MySQL 系统自带的数据库,主要保存 MySQL 数据库服务器的系统信息,
+	比如数据库的名称、数据表的名称、字段名称、存取权限、数据文件 所在的文件夹和系统使用的文件夹,等等
+	“performance_schema”是 MySQL 系统自带的数据库,可以用来监控 MySQL 的各类性能指标。
+	“sys”数据库是 MySQL 系统自带的数据库,主要作用是以一种更容易被理解的方式展示 MySQL 数据库服务器的各类性能指标,帮助系统管理员和开发人员监控 MySQL 的技术性能。
+	“mysql”数据库保存了 MySQL 数据库服务器运行时需要的系统信息,比如数据文件夹、当前使用的字符集、约束检查信息，等等
+
+### 创建数据库
+
+![image-20220420195215840](E:\Typora\Mysql\image-20220420195215840.png)
+
+### 使用数据库
+	use 数据库名;
+### 查看某个库的所有表格
+	show databases;
+### 创建新的表格
+
+![image-20220420200217864](E:\Typora\Mysql\image-20220420200217864.png)
+
+### 查看一个表的数据
+	show tables; #要求前面有use语句
+### 添加一条记录
+
+![image-20220420200309567](E:\Typora\Mysql\image-20220420200309567.png)
+
+	insert into 表名称 values(值列表);
+### 查看表的创建信息
+
+![image-20220420200339554](E:\Typora\Mysql\image-20220420200339554.png)
+
+	select * from 数据库表名称;
+
+### 查看数据库的创建信息
+
+![image-20220420200422935](E:\Typora\Mysql\image-20220420200422935.png)
+
+	上面的结果显示tencent_test数据库也不支持中文，字符集默认是latin1
+### 删除表格
+
+![image-20220420201856517](E:\Typora\Mysql\image-20220420201856517.png)
+
+### 删除数据库
+
+![image-20220420201908275](E:\Typora\Mysql\image-20220420201908275.png)
+
+## MySQL的编码设置
+
+	命令行操作sql乱码问题,修改mysql的数据目录下的my.ini配置文件
+	default-character-set=utf8 #默认字符集
+	[mysqld] # 大概在76行左右,在其下添加
+	...
+	character-set-server=utf8
+	collation-server=utf8_general_ci
+	
+	重启服务
+	
+	查看编码命令
+	show variables like 'character_%';
+	show variables like 'collation_%';
+
+![image-20220420204545208](E:\Typora\Mysql\image-20220420204545208.png)
 
 # SELECT
 
