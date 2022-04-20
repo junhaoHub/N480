@@ -54,9 +54,10 @@
 
 ![image-20220416174604905](E:\Typora\Mysql\image-20220416174604905.png)
 
-##  关系型数据库设计规则
+##  Rule
+关系型数据库设计规则
 
-	表具有一些特性，这些特性定义了数据在表中如何存储，类似Java中 “类”的设计。
+	表具有一些特性,这些特性定义了数据在表中如何存储类似Java中 “类”的设计
 
 ### ER模型
 实体-联系(entity-relationship),模型中有三个主要概念是:实体集、属性、联系集
@@ -73,33 +74,65 @@
 
 ## 表的关联关系
 
-### 一对一关联（one-to-one）
-    在实际的开发中应用不多，因为一对一可以创建成一张表。
-    举例：设计 学生表 ：学号、姓名、手机号码、班级、系别、身份证号码、家庭住址、籍贯、紧急、联系人、...
+### 一对一
+    在实际的开发中应用不多,因为一对一可以创建成一张表。
+    举例: 设计学生表 : 学号、姓名、手机号码、班级、系别、身份证号码、家庭住址、籍贯、紧急、联系人、...
     拆为两个表：两个表的记录是一一对应关系。
     基础信息表 （常用信息）：学号、姓名、手机号码、班级、系别
     档案信息表 （不常用信息）：学号、身份证号码、家庭住址、籍贯、紧急联系人、...
 
-### 一对多关系（one-to-many）
-	常见实例场景： 客户表和订单表 ， 分类表和商品表 ， 部门表和员工表 。
+### 一对多
+	常见实例场景： 客户表和订单表, 分类表和商品表,部门表和员工表 。
 	举例:
 	员工表：编号、姓名、...、所属部门
 	部门表：编号、名称、简介
 
-### 多对多（many-to-many）
-	必须创建第三个表，该表通常称为联接表,它将多对多关系划分为两个一对多关系。将这两个表的主键都插入到第三个表中。
+### 多对多
+	必须创建第三个表,该表通常称为 联接表,它将多对多关系划分为两个一对多关系。将这两个表的主键都插入到第三个表中
+	常见实例场景: 用户-角色
+	多对多关系建表原则：需要创建第三张表，中间表中至少两个字段，这两个字段分别作为外键指向各自一方的主键。
 
-![image-20220419213237923](E:\Typora\Mysql\image-20220419213237923.png)
-
-
-
-
-
-
+![image-20220420160908821](E:\Typora\Mysql\image-20220420160908821.png)
 
 # 环境搭建
+##  配置环境变量
+	变量名:MYSQL_HOME
+	变量值:E:\mysql-5.7.20-winx64
+	path里添加:%MYSQL_HOME%\bin
+
+## 生成data文件
+	以管理员身份运行cmd
+	进入E:\mysql-5.7.20-winx64\bin下
+	执行命令:mysqld --initialize-insecure --user=mysql  
+	在E:\mysql-5.7.20-winx64目录下生成data目录
+
+## 启动服务
+	执行命令：net start mysql 
+	提示：服务名无效
+	解决方法:
+	执行命令:mysqld -install  即可（不需要my.ini配置文件 注意：网上写的很多需要my.ini配置文件，其实不需要my.ini配置文件也可以，我之前放置了my.ini文件，反而提示服务无法启动，把my.ini删除后启动成功了）
+## 登录mysql
+	E:\mysql-5.7.20-winx64\bin>mysql -u root -p
+## 设置用户密码
+	mysql> SET PASSWORD = '123';
+## 残余文件的清理
+	如果再次安装不成功,可以卸载后对残余文件进行清理后再安装。
+	服务目录:mysql服务的安装目录
+	数据目录:默认在C:\ProgramData\MySQL
+## 清理注册表
+	在系统的搜索框中输入 regedit
+```
+HKEY_LOCAL_MACHINE\SYSTEM\ControlSet001\Services\MySQL
+HKEY_LOCAL_MACHINE\SYSTEM\ControlSet002\Services\Eventlog\Application\MySQL
+HKEY_LOCAL_MACHINE\SYSTEM\ControlSet002\Services\MySQL
+HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Eventlog\Application\MySQL
+HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\MySQL
+```
+## 删除环境变量配置
+	找到path环境变量,将其中关于mysql的环境变量删除,切记不要全部删除。
 
 # SELECT
+
 ## 基本的SELECT语句
 ## 运算符
 ## 排序与分页
