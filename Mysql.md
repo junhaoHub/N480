@@ -94,6 +94,12 @@
 
 ![image-20220420160908821](E:\Typora\Mysql\image-20220420160908821.png)
 
+## SQL大小写规范
+	MySQL 在 Windows 环境下是大小写不敏感的
+	MySQL 在 Linux 环境下是大小写敏感的
+	数据库名、表名、表别名、字段名、字段别名等都小写
+	SQL关键字、函数名、绑定变量等都大写
+
 # 环境搭建
 ##  配置环境变量
 	变量名:MYSQL_HOME
@@ -169,9 +175,15 @@ HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\MySQL
 	“sys”数据库是 MySQL 系统自带的数据库,主要作用是以一种更容易被理解的方式展示 MySQL 数据库服务器的各类性能指标,帮助系统管理员和开发人员监控 MySQL 的技术性能。
 	“mysql”数据库保存了 MySQL 数据库服务器运行时需要的系统信息,比如数据文件夹、当前使用的字符集、约束检查信息，等等
 
+
 ## 创建数据库
 
 ![image-20220420195215840](E:\Typora\Mysql\image-20220420195215840.png)
+
+## 导入数据库
+
+![image-20220421200919677](E:\Typora\Mysql\image-20220421200919677.png)
+
 
 ## 使用数据库
 	use 数据库名;
@@ -208,9 +220,46 @@ HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\MySQL
 ![image-20220420201908275](E:\Typora\Mysql\image-20220420201908275.png)
 
 # SELECT
-
 ## 基本语句
+```mysql
+SELECT 1; #没有任何子句
+SELECT 9/2; #没有任何子句,用于运算
+```
+### SELECT ... FROM
+```mysql
+#SELECT 标识选择哪些列,FROM 标识从哪个表中选择
+SELECT employee_id,last_name,salary FROM departments;
+```
+![image-20220421201939254](E:\Typora\Mysql\image-20220421201939254.png)
+### 列的别名
+```mysql
+#给列名起别名的三种方式
+SELECT employee_id emp_id,last_name AS lname,salary*12 "annual_sal" FROM employees;
+```
+
+![image-20220421204326542](E:\Typora\Mysql\image-20220421204326542.png)
+
+### 去除重复行
+```mysql
+#当需要查询员工表中一共有哪些部门id
+SELECT DISTINCT department_id From employees;
+```
+![image-20220421204759011](E:\Typora\Mysql\image-20220421204759011.png)
+
+### 空值参与运算
+```mysql
+#在列值 奖金率有NULL值的情况下，引入IF将NULL值的数据看为0
+select first_name,salary "月工资",salary*(1+IFNULL(commission_pct,0))*12 "年工资",commission_pct from employees;
+#这样就不会出现年终奖为NULL的情况了
+```
+
+![image-20220421211410015](E:\Typora\Mysql\image-20220421211410015.png)
+
+### 飘号 ` `
+
+
 ## 运算符
+
 ## 排序与分页
 ## 多表查询
 ## 单行函数
