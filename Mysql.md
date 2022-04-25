@@ -307,36 +307,109 @@ SELECT * FROM employeesWHERE employee_id MOD 2 = 0;
 ### 比较运算符
 	用来对表达式左边的操作数和右边的操作数进行比较，比较的结果为真则返回1，比较的结果为假则返回0，其他情况则返回NULL。
 
-| 运算符 | 名称           | 作用                                                         | 示例                            |
-| ------ | -------------- | ------------------------------------------------------------ | ------------------------------- |
-| =      | 等于运算符     | 判断两个值、字符串或表达式是否相等                           | select C from table where A=B   |
-| <=>    | 安全等于运算符 | 安全地判断两个值、字符串或表达式是否相等                     | select C from table where A<=>B |
-| !=     | 不等于运算符   | 判断两个值、字符串或表达式是否不相等                         | select C from table where A!=B  |
-| <      | 小于运算符     | 判断前面的值、字符串或表达式是否小于后面的值、字符串或表达式 | select C from table where A<B   |
-| <=     | 小于等于运算符 | 判断前面的值、字符串或表达式是否小于等于后面的值、字符串或表达式 | select C from table where A<=B  |
-| >      | 大于运算符     | 判断前面的值、字符串或表达式是否大于后面的值、字符串或表达式 | select C from table where A>B   |
-| >=     | 大于等于运算符 | 判断前面的值、字符串或表达式是否大于等于后面的值、字符串或表达式 | select C from table where A>=B  |
+| 运算符 | 名称               | 作用                                                         | 示例                            |
+| ------ | ------------------ | ------------------------------------------------------------ | ------------------------------- |
+| =      | 等于运算符         | 判断两个值、字符串或表达式是否相等                           | select C from table where A=B   |
+| <=>    | 安全等于运算符     | 安全地判断两个值、字符串或表达式是否相等                     | select C from table where A<=>B |
+| !=     | 不等于运算符（<>） | 判断两个值、字符串或表达式是否不相等                         | select C from table where A!=B  |
+| <      | 小于运算符         | 判断前面的值、字符串或表达式是否小于后面的值、字符串或表达式 | select C from table where A<B   |
+| <=     | 小于等于运算符     | 判断前面的值、字符串或表达式是否小于等于后面的值、字符串或表达式 | select C from table where A<=B  |
+| >      | 大于运算符         | 判断前面的值、字符串或表达式是否大于后面的值、字符串或表达式 | select C from table where A>B   |
+| >=     | 大于等于运算符     | 判断前面的值、字符串或表达式是否大于等于后面的值、字符串或表达式 | select C from table where A>=B  |
+
+```mysql
+#只要有null参与运算,结果就为null
+SELECT 1= NULL,NULL=NULL FROM DUAL;
+```
+![image-20220424153048474](E:\Typora\Mysql\image-20220424153048474.png)
+
+### 为NULL而生的安全运算符
+```mysql
+SELECT 1 <=> '1', 1 <=> 0, 'a' <=> 'a', (5 + 3) <=> (2 + 6), '' <=> NULL,NULL<=> NULL FROM dual;
+```
+
+<img src="E:\Typora\Mysql\image-20220424160718368.png" alt="image-20220424160718368"  />
+
+### 不使用安全运算符
+
+![image-20220424160947688](E:\Typora\Mysql\image-20220424160947688.png)
+
+### 使用安全运算符的Where子句
+
+![image-20220424161636754](E:\Typora\Mysql\image-20220424161636754.png)
+
+### 不使用安全运算符
+
+![image-20220424161735884](E:\Typora\Mysql\image-20220424161735884.png)
+
+
 
 ### 非符号类型的运算符
 
-| 运算符      | 名称         | 作用 | 示例 |
-| ----------- | ------------ | ---- | ---- |
-| IS NULL     | 不为空运算符 |      |      |
-| LEAST       |              |      |      |
-| GREATEST    |              |      |      |
-| BETWEEN AND |              |      |      |
-| IS NULL     |              |      |      |
-| IN          |              |      |      |
-| NOT IN      |              |      |      |
-| LIKE        |              |      |      |
-| REGEXP      |              |      |      |
-| RLIKE       |              |      |      |
+| 运算符      | 名称             | 作用                                     | 示例                                         |
+| ----------- | ---------------- | ---------------------------------------- | -------------------------------------------- |
+| IS NOT NULL | 不为空运算符     | 判断值、字符串或表达式是否不为空         | select C from table where A IS NOT NULL      |
+| LEAST       | 最小值运算符     | 在多个值中返回最小值                     | select C from table where A LEAST （A，B）   |
+| GREATEST    | 最大值运算符     | 在多个值中返回最大值                     | select C from table where A GREATEST（A，B） |
+| BETWEEN AND | 两值之间的运算符 | 判断一个值是否在两个值之间               | select C from table where A BETWEEN A AND B  |
+| IS NULL     | 为空运算符       | 判断一个值、字符串或表达式是否为空       | select C from table where A IS NULL          |
+| IN          | 属于运算符       | 判断一个值是否为列表中的任意一个值       | select C from table where A in（A，B）       |
+| NOT IN      | 不属于运算符     | 判断一个值是否不是一个列表中的任意一个值 | select C from table where A not in（A，B）   |
+| LIKE        | 模糊匹配运算符   | 判断一个值是否符合模糊匹配规则           | select C from table where A not like B       |
+| REGEXP      | 正则表达式运算符 | 判断一个值是否符合正则表达式的规则       | select C from table where A not  REGEXP B    |
+| RLIKE       | 正则表达式运算符 | 判断一个值是否符合正则表达式的规则       | select C from table where A not  RLike B     |
 
+### 使用Least根据名称或单词长度比较排序
 
+![image-20220424163809098](E:\Typora\Mysql\image-20220424163809098.png)
 
+![image-20220424163829595](E:\Typora\Mysql\image-20220424163829595.png)
+
+### 范围查找
+```mysql
+SELECT last_name,salary FROM employees WHERE salary BETWEEN 2500 AND 3500;
+```
+
+![image-20220424164102340](E:\Typora\Mysql\image-20220424164102340.png)
+
+### 离散查找
+IN运算符用于判断给定的值是否是IN列表中的一个值
+```mysql
+SELECT 'a' IN ('a','b','c'), 1 IN (2,3), NULL IN ('a','b'), 'a' IN ('a', NULL); 
+```
+
+![image-20220424164411096](E:\Typora\Mysql\image-20220424164411096.png)
+
+### 模糊查询
+	LIKE运算符主要用来匹配字符串，通常用于模糊匹配，如果满足条件则返回1，否则返回0。
+	“%”：匹配0个或多个字符
+	“_”：只能匹配一个字符
+
+![image-20220424164707399](E:\Typora\Mysql\image-20220424164707399.png)
+
+![image-20220424164730644](E:\Typora\Mysql\image-20220424164730644.png)
+
+![image-20220424165004436](E:\Typora\Mysql\image-20220424165004436.png)
+
+```mysql
+# 练习：查询第二个字符是_且第三个字符是'a'的员工信息
+select last_name from employees where last_name like "_\_a%"
+```
+
+### REGEXP运算符
+	‘^’匹配以该字符后面的字符开头的字符串。
+	‘$’匹配以该字符前面的字符结尾的字符串。
+	‘.’匹配任何一个单字符。
+	“[...]”匹配在方括号内的任何字符。例如，“[abc]”匹配“a”或“b”或“c”。为了命名字符的范围，使用一个‘-’。“[a-z]”匹配任何字母，而“[0-9]”匹配任何数字。
+	‘*’匹配零个或多个在它前面的字符。例如，“x*”匹配任何数量的‘x’字符，“[0-9]*”匹配任何数量的数字，而“*”匹配任何数量的任何字符。
+
+```mysql
+SELECT 'shkstart' REGEXP '^s', 'shkstart' REGEXP 't$', 'shkstart' REGEXP 'hk';
+```
 
 
 ## 排序与分页
+
 ## 多表查询
 ## 单行函数
 ## 聚合函数
