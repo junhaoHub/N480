@@ -256,7 +256,7 @@ select first_name,salary "月工资",salary*(1+IFNULL(commission_pct,0))*12 "年
 ![image-20220421211410015](E:\Typora\Mysql\image-20220421211410015.png)
 
 ### 飘号 ` `
-	为了保证表中的字段、表名等没有和保留字、数据库系统或常用方法冲突，使用一对``（飘号）引起来。
+	为了保证表中的字段、表名等没有和保留字、数据库系统或常用方法冲突，使用一对``（飘号）引起来
 
 ![image-20220422152613529](E:\Typora\Mysql\image-20220422152613529.png)
 
@@ -406,6 +406,88 @@ select last_name from employees where last_name like "_\_a%"
 ```mysql
 SELECT 'shkstart' REGEXP '^s', 'shkstart' REGEXP 't$', 'shkstart' REGEXP 'hk';
 ```
+
+### 逻辑运算符
+逻辑运算符主要用来判断表达式的真假，在MySQL中，逻辑运算符的返回结果为1、0或者NULL
+
+| 运算符     | 作用     | 示例           |
+| ---------- | -------- | -------------- |
+| NOT 或 !   | 逻辑非   | select not a   |
+| AND  或 && | 逻辑与   | select a && b  |
+| OR 或 \|\| | 逻辑或   | select a or b  |
+| XOR        | 逻辑异或 | select a XOR b |
+
+#### 规则
+	OR可以和AND一起使用,但是在使用时要注意两者的优先级,由于AND的优先级高于OR,因此先对AND两边的操作数进行操作,再与OR中的操作数结合
+
+#### 非运算符
+
+逻辑非（NOT或!）当给定的值为0时返回1；当给定的值为非0值时返回0； 当给定的值为NULL时，返回NULL
+
+![image-20220425144723518](E:\Typora\Mysql\image-20220425144723518.png)
+
+#### 与运算符
+逻辑与（AND或&&）给定的所有值均为非0值，且都不为NULL时，返回1；当给定的一个值或者多个值为0时则返回0；否则返回NULL
+
+![image-20220425145332173](E:\Typora\Mysql\image-20220425145332173.png)
+
+#### 或运算符
+逻辑或（OR或||）给定的值都不为NULL，并且任何一个值为非0值时，则返回1，否则返回0；当一个值为NULL，并且另一个值为非0值时，返回1，否则返回NULL；当两个值都为NULL时，返回NULL
+
+![image-20220425150526347](E:\Typora\Mysql\image-20220425150526347.png)
+
+```mysql
+#查询基本薪资不在9000-12000之间的员工编号和基本薪资
+select employee_id,salary from employees where (salary>12000 or salary <9000);
+#法二
+select employee_id,salary from employees where not(salary>9000 and salary<=12000);
+```
+
+#### 异或运算符
+逻辑异或（XOR）是当给定的值中任意一个值为NULL时，则返回NULL；如果两个非NULL的值都是0或者都不等于0时，则返回0；如果一个值为0，另一个值不为0时，则返回1
+
+#### 位运算符
+位运算符是在二进制数上进行计算的运算符。位运算符会先将操作数变成二进制数，然后进行位运算，最后将计算结果从二进制变回十进制数
+
+| 运算符 | 作用     | 示例           |
+| ------ | -------- | -------------- |
+| &      | 位AND    | select A and B |
+| \|     | 位OR     | select A \| B  |
+| ^      | 位XOR    | select A ^ B   |
+| ~      | 按位取反 | select ~ A     |
+| >>     | 按位右移 | select A >> 2  |
+| <<     | 按位左移 | select B << 2  |
+
+![image-20220425153612597](E:\Typora\Mysql\image-20220425153612597.png)
+
+#### 运算符优先级
+
+| 优先级 | 运算符                                                     |
+| ------ | ---------------------------------------------------------- |
+| 1      | ( )                                                        |
+| 2      | !                                                          |
+| 3      | —(负号) 和 ~（按位取反）                                   |
+| 4      | ^（位XOR）                                                 |
+| 5      | * , / 和（DIV） ,  %和MOD                                  |
+| 6      | - 和 +                                                     |
+| 7      | <<与>>                                                     |
+| 8      | &                                                          |
+| 9      | \|                                                         |
+| 10     | =（比较运算符），<==>,>=,>,<=,<,<>,!=,IS,LIKE,REGEXP 和 IN |
+| 11     | BETWEEN,CASE,WHEN,THEN和ELSE                               |
+| 12     | NOT                                                        |
+| 13     | && , AND                                                   |
+| 14     | \|\|,OR,XOR                                                |
+| 15     | := , =                                                     |
+
+
+
+
+
+
+
+
+
 
 
 ## 排序与分页
