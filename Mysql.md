@@ -454,11 +454,21 @@ select employee_id,salary from employees where not(salary>9000 and salary<=12000
 | &      | 位AND    | select A and B |
 | \|     | 位OR     | select A \| B  |
 | ^      | 位XOR    | select A ^ B   |
-| ~      | 按位取反 | select ~ A     |
+| ~      | 按位取反 | select A & ~B  |
 | >>     | 按位右移 | select A >> 2  |
 | <<     | 按位左移 | select B << 2  |
 
 ![image-20220425153612597](E:\Typora\Mysql\image-20220425153612597.png)
+
+##### 按位取反
+按位取反（~）运算符将给定的值的二进制数逐位进行取反操作，即将1变为0，将0变为1
+```mysql
+SELECT 10 & ~1;
+SELECT 1 & ~1;
+```
+
+![image-20220426154115240](E:\Typora\Mysql\image-20220426154115240.png)
+
 
 #### 运算符优先级
 
@@ -470,7 +480,7 @@ select employee_id,salary from employees where not(salary>9000 and salary<=12000
 | 4      | ^（位XOR）                                                 |
 | 5      | * , / 和（DIV） ,  %和MOD                                  |
 | 6      | - 和 +                                                     |
-| 7      | <<与>>                                                     |
+| 7      | << 与 >>                                                   |
 | 8      | &                                                          |
 | 9      | \|                                                         |
 | 10     | =（比较运算符），<==>,>=,>,<=,<,<>,!=,IS,LIKE,REGEXP 和 IN |
