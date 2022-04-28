@@ -88,9 +88,9 @@
 	部门表：编号、名称、简介
 
 ### 多对多
-	必须创建第三个表,该表通常称为 联接表,它将多对多关系划分为两个一对多关系。将这两个表的主键都插入到第三个表中
+	必须创建第三个表,该表通常称为 联接表,它将多对多关系划分为两个一对多关系。将这两个表的主键都插入到第三个表
 	常见实例场景: 用户-角色
-	多对多关系建表原则：需要创建第三张表，中间表中至少两个字段，这两个字段分别作为外键指向各自一方的主键。
+	多对多关系建表原则：需要创建第三张表，中间表中至少两个字段，这两个字段分别作为外键指向各自一方的主键
 
 ![image-20220420160908821](E:\Typora\Mysql\image-20220420160908821.png)
 
@@ -242,7 +242,7 @@ SELECT employee_id emp_id,last_name AS lname,salary*12 "annual_sal" FROM employe
 ### 去除重复行
 ```mysql
 #当需要查询员工表中一共有哪些部门id
-SELECT DISTINCT department_id From employees;
+SELECT DISTINCT department_id FROM employees;
 ```
 ![image-20220421204759011](E:\Typora\Mysql\image-20220421204759011.png)
 
@@ -302,7 +302,7 @@ SELECT 100, 100 + 0, 100 - 0, 100 + 50, 100 + 50 -30, 100 + 35.5, 100 --35.5 FRO
 ### 求模（求余）运算符
 ```mysql
 #筛选出employee_id是偶数的员工
-SELECT * FROM employeesWHERE employee_id MOD 2 = 0;
+SELECT * FROM employees WHERE employee_id MOD 2 = 0;
 ```
 ### 比较运算符
 	用来对表达式左边的操作数和右边的操作数进行比较，比较的结果为真则返回1，比较的结果为假则返回0，其他情况则返回NULL。
@@ -348,10 +348,10 @@ SELECT 1 <=> '1', 1 <=> 0, 'a' <=> 'a', (5 + 3) <=> (2 + 6), '' <=> NULL,NULL<=>
 
 | 运算符      | 名称             | 作用                                     | 示例                                         |
 | ----------- | ---------------- | ---------------------------------------- | -------------------------------------------- |
-| IS NOT NULL | 不为空运算符     | 判断值、字符串或表达式是否不为空         | select C from table where A IS NOT NULL      |
+| IS NOT NULL | 不为空运算符     | 判断值、字符串或表达式是否不为空         | SELECT C from table where A IS NOT NULL      |
 | LEAST       | 最小值运算符     | 在多个值中返回最小值                     | select C from table where A LEAST （A，B）   |
 | GREATEST    | 最大值运算符     | 在多个值中返回最大值                     | select C from table where A GREATEST（A，B） |
-| BETWEEN AND | 两值之间的运算符 | 判断一个值是否在两个值之间               | select C from table where A BETWEEN A AND B  |
+| BETWEEN AND | 两值之间的运算符 | 判断一个值是否在两个值之间               | select C from table where C BETWEEN A AND B  |
 | IS NULL     | 为空运算符       | 判断一个值、字符串或表达式是否为空       | select C from table where A IS NULL          |
 | IN          | 属于运算符       | 判断一个值是否为列表中的任意一个值       | select C from table where A in（A，B）       |
 | NOT IN      | 不属于运算符     | 判断一个值是否不是一个列表中的任意一个值 | select C from table where A not in（A，B）   |
@@ -397,11 +397,11 @@ select last_name from employees where last_name like "_\_a%"
 ```
 
 ### REGEXP运算符
-	‘^’匹配以该字符后面的字符开头的字符串。
-	‘$’匹配以该字符前面的字符结尾的字符串。
-	‘.’匹配任何一个单字符。
+	‘^’匹配以该字符后面的字符开头的字符串
+	‘$’匹配以该字符前面的字符结尾的字符串
+	‘.’匹配任何一个单字符
 	“[...]”匹配在方括号内的任何字符。例如，“[abc]”匹配“a”或“b”或“c”。为了命名字符的范围，使用一个‘-’。“[a-z]”匹配任何字母，而“[0-9]”匹配任何数字。
-	‘*’匹配零个或多个在它前面的字符。例如，“x*”匹配任何数量的‘x’字符，“[0-9]*”匹配任何数量的数字，而“*”匹配任何数量的任何字符。
+	‘*’匹配零个或多个在它前面的字符。例如,“x*”匹配任何数量的‘x’字符，“[0-9]*”匹配任何数量的数字，而“*”匹配任何数量的任何字符
 
 ```mysql
 SELECT 'shkstart' REGEXP '^s', 'shkstart' REGEXP 't$', 'shkstart' REGEXP 'hk';
@@ -491,16 +491,73 @@ SELECT 1 & ~1;
 | 15     | := , =                                                     |
 
 
+## 排序
+### 模板
+```mysql
+SELECT * FROM employees ORDER BY hire_date [DESC][ASC];
+```
+### 单列排序
+```mysql
+SELECT last_name, job_id,department_id,hire_date
+FROM employees
+ORDER BY hire_date ASC;
+```
+### 多列排序
+#### 规则
+	对多列进行排序的时候,首先排序的第一列必须有相同的列值,才会对第二列进行排序。
+	如果第一列数据中所有值都是唯一的,将不再对第二列进行排序
+
+#### 示例代码
+```mysql
+#因为是多列排序，故department_id列后未添加降序or升序，默认为升序
+SELECT last_name,department_id,salary FROM employees ORDER BY department_id,salary ASC;
+#添加后，假使department_id有相同的，则按照下一列（salary）进行升序排序
+SELECT last_name,department_id,salary FROM employees ORDER BY department_id DESC,salary ASC;
+```
+
+![image-20220428161501301](E:\Typora\Mysql\image-20220428161501301.png)
+
+## 分页
+将数据库中的结果集，一段一段显示出来需要的条件
+
+### 优点
+	约束返回结果的数量可以减少数据表的网络传输量,也可以提升查询效率。如果我们知道返回结果只有1条,就可以使用 LIMIT 1。告诉 SELECT 语句只需要返回一条记录即可。这样的好处就是 SELECT 不需要扫描完整的表，只需要检索到一条符合条件的记录即可返回。
+
+### 场景
+	场景一:查询返回的记录太多了，查看起来很不方便，怎么样能够实现分页查询呢？
+	场景二:表里有 4 条数据，我们只想要显示第 2、3 条数据怎么办呢？
+
+### 模板
+	LIMIT[位置偏移量] 行数
+	位置偏移量:开头是从第几个数开始的
+	行数:指示返回的记录条数
+
+### 规则
+	LIMIT 子句必须放在整个SELECT语句的最后！
+
+### 实例代码
+```mysql
+#前10条记录
+SELECT * FROM 表名 LIMIT 0,10;
+SELECT * FROM 表名 LIMIT 10;
+
+#第11至20条记录
+SELECT * FROM 表名 LIMIT 10,10;
+
+#第21至30条记录：
+SELECT * FROM 表名 LIMIT 20,10;
+
+#获取从第5条记录开始后面的3条记录
+SELECT * FROM 表名 LIMIT 3 OFFSET 4;
+SELECT * FROM table LIMIT 4,3;
+
+```
+### 分页显示公式
+	(当前页数-1)*每页条数，每页条数
 
 
 
 
-
-
-
-
-
-## 排序与分页
 
 ## 多表查询
 ## 单行函数
