@@ -511,7 +511,7 @@ ORDER BY hire_date ASC;
 ```mysql
 #因为是多列排序，故department_id列后未添加降序or升序，默认为升序
 SELECT last_name,department_id,salary FROM employees ORDER BY department_id,salary ASC;
-#添加后，假使department_id有相同的，则按照下一列（salary）进行升序排序
+#添加后，假使第一列(department_id)有相同的，则按照下一列（salary）进行升序排序
 SELECT last_name,department_id,salary FROM employees ORDER BY department_id DESC,salary ASC;
 ```
 
@@ -521,11 +521,11 @@ SELECT last_name,department_id,salary FROM employees ORDER BY department_id DESC
 将数据库中的结果集，一段一段显示出来需要的条件
 
 ### 优点
-	约束返回结果的数量可以减少数据表的网络传输量,也可以提升查询效率。如果我们知道返回结果只有1条,就可以使用 LIMIT 1。告诉 SELECT 语句只需要返回一条记录即可。这样的好处就是 SELECT 不需要扫描完整的表，只需要检索到一条符合条件的记录即可返回。
+	约束返回结果的数量可以减少数据表的网络传输量,也可以提升查询效率.如果我们知道返回结果只有1条,就可以使用 LIMIT 1.告诉 SELECT 语句只需要返回一条记录即可.这样的好处就是 SELECT 不需要扫描完整的表,只需要检索到一条符合条件的记录即可返回。
 
 ### 场景
-	场景一:查询返回的记录太多了，查看起来很不方便，怎么样能够实现分页查询呢？
-	场景二:表里有 4 条数据，我们只想要显示第 2、3 条数据怎么办呢？
+	场景一:查询返回的记录太多了,查看起来很不方便,怎么样能够实现分页查询呢？
+	场景二:表里有 4 条数据,我们只想要显示第 2、3 条数据怎么办呢？
 
 ### 模板
 	LIMIT[位置偏移量] 行数
@@ -533,7 +533,7 @@ SELECT last_name,department_id,salary FROM employees ORDER BY department_id DESC
 	行数:指示返回的记录条数
 
 ### 规则
-	LIMIT 子句必须放在整个SELECT语句的最后！
+	LIMIT 子句必须放在整个 SELECT 语句的最后！
 
 ### 实例代码
 ```mysql
@@ -553,8 +553,10 @@ SELECT * FROM table LIMIT 4,3;
 
 ```
 ### 分页显示公式
-	(当前页数-1)*每页条数，每页条数
-
+```mysql
+# 每页显示pageSize条记录，此时显示第pageNo页:
+LIMIT (pageNo-1)*pageSize,pag
+```
 
 
 
