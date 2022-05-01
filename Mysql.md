@@ -648,9 +648,56 @@ SELECT e.last_name ,e.salary,j.grade_level,j.lowest_sal,j.highest_sal FROM emplo
 
 <img src="E:\Typora\Mysql\image-20220430115328004.png" alt="image-20220430115328004"  />
 
+### 自连接 
+查询使用的是自己的表连接自己的表，而非自连接使用了多张不同的表互相连接
+#### 案例
 
+	table1和table2本质上是同一张表,只是用取别名的方式虚代表不同的意义。然后两个表再进行内外连接查询
 
+![image-20220501105942296](E:\Typora\Mysql\image-20220501105942296.png)
 
+	在每个WORKER上层都有一个MANAGER,并对应着MANAGER_ID,而在MANAGER表中,每个经理就理所当然的变成了表中的成员,对应着EMPLOYEES_ID,在前者表中的MANAGER_ID等于后者的EMPLOYEES_ID
+	查询employees表，返回“Xxx works for Xxx”
+```mysql
+SELECT CONCAT(worker.last_name,' works for ',manager.last_name) from employees worker,employees manager where worker.manager_id = manager.employee_id;
+```
+
+#### 案例2
+	查询出last_name 为 'Chen' 的员工的manager的信息，除了查询满足条件的记录以外，外连接还可以查询某一方不满足条件的记录。
+```mysql
+SELECT manager.last_name,manager.department_id FROM employees worker,employees manager WHERE (worker.last_name = manager.last_name AND manager.last_name like '%Chen%');
+```
+
+![image-20220501115946909](E:\Typora\Mysql\image-20220501115946909.png)
+### 内连接
+	合并具有同一列的两个以上的表的行,结果集中不包含一个表与另一个表不匹配的行
+### 外连接
+	两个表在连接过程中除了返回满足连接条件的行以外,还返回左（或右）表中不满足条件的行,这种连接称为左（或右）外连接。没有匹配的行时,结果表中相应的列为空
+	左外连接,则连接条件中左边的表也称为主表,右边的表称为从表
+	右外连接,则连接条件中右边的表也称为主表,左边的表称为从表
+
+### Oracle 中使用(+)创建外连接
+	在SQL92中采用(+)代表从表所在的位置,即左或右外连接中,(+)表示哪个是从表
+	Oracle 对 SQL92 支持较好,而 MySQL 则不支持 SQL92 的外连接
+	在 SQL92 中,只有左外连接和右外连接，没有满（或全）外连接
+```mysql
+#左外连接
+SELECT last_name,department_name
+FROM employees ,departments
+WHERE employees.department_id = departments.department_id(+);
+#右外连接
+SELECT last_name,department_name
+FROM employees ,departments
+WHERE employees.department_id(+) = departments.department_id;
+```
+
+### MYSQL 中使用（JOIN...ON）实现多表查询
+	SQL99 采用的这种嵌套结构非常清爽、层次性更强、可读性更强,即使再多的表进行连接也都清晰可见。如果你采用 SQL92,可读性就会大打折扣。
+```mysql
+SELECT table1.column, table2.column,table3.column FROM table1
+JOIN table2 ON table1 和 table2 的连接条件
+JOIN table3 ON table2 和 table3 的连接条件
+```
 
 
 
