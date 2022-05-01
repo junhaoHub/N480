@@ -555,13 +555,105 @@ SELECT * FROM table LIMIT 4,3;
 ### 分页显示公式
 ```mysql
 # 每页显示pageSize条记录，此时显示第pageNo页:
-LIMIT (pageNo-1)*pageSize,pag
+LIMIT (pageNo-1)*pageSize,pagSize
 ```
 
-
-
-
 ## 多表查询
+也称为关联查询，指两个或更多个表一起完成查询操作
+
+### 规则
+	这些一起查询的表之间是有关系的,这个关联字段可能建立了外键，也可能没有建立外键
+
+### 案例
+```mysql
+#查询员工的姓名及其所归属的部门名称
+SELECT last_name,department_name FROM employees,departments;
+```
+	本意是想找到员工所对应的部门名称，结果员工在每个部门都有所归属,故此查询错误
+![image-20220429195012279](E:\Typora\Mysql\image-20220429195012279.png)
+
+我们把上述多表查询中出现的问题称为：笛卡尔积的错误
+
+![image-20220429194836005](E:\Typora\Mysql\image-20220429194836005.png)
+
+### 笛卡尔积
+	笛卡尔积也称为交叉连接英文是 CROSS JOIN 。在 SQL 中也是使用 CROSS JOIN 表示交叉连接。它的作用就是可以把任意表进行连接，即使这两张表不相关。
+	假如第一张表有10个数据,第二张表有20个数据,笛卡尔积之后则会有10*20=200个数据
+#### 产生笛卡尔积错误的条件
+	省略多个表的连接条件（或关联条件）
+	连接条件（或关联条件）无效
+	所有表中的所有行互相连接
+#### 如何避免笛卡尔积
+	可以在 WHERE 加入有效的连接条件
+```mysql
+SELECT table1.column, table2.column
+FROM table1, table2
+WHERE table1.column1 = table2.column2; 
+```
+### 案例（修改后）
+```mysql
+SELECT last_name,department_name FROM employees,departments WHERE employees.department_id = departments.department_id;
+#在表中有相同列时，在列名之前加上表名前缀
+```
+
+### 等值连接
+
+![image-20220430095700386](E:\Typora\Mysql\image-20220430095700386.png)
+
+```mysql
+SELECT employees.department_id,departments.department_id from employees,departments where employees.department_id=departments.department_id;
+```
+
+![image-20220430101130005](E:\Typora\Mysql\image-20220430101130005.png)
+
+### 多个连接条件
+
+#### 规则
+	多个表中有相同列时，必须在列名之前加上表名前缀
+	在不同表中具有相同列名的列可以用 表名 加以区分
+
+#### 示例代码
+```mysql
+SELECT departments.manager_id,departments.department_id,departments.location_id,employees.first_name,employees.salary FROM emp_details_view,departments,employees WHERE emp_details_view.department_id=departments.department_id AND departments.department_id=employees.department_id;
+```
+### 表的别名
+使用别名可以简化查询，列名前使用表名前缀可以提高查询效率。
+#### 规则
+	对于数据库中表记录的查询和变更，只要涉及多个表，都需要在列名前加表的别名进行限定。
+	如果使用了表的别名，在查询字段中、过滤条件中就只能使用别名进行代替，不能使用原有的表名，否则就会报错
+#### 正例
+```mysql
+select t1.name from table_first as t1 , table_second as t2 where t1.id=t2.id;
+```
+#### 反例
+	在某业务中，由于多表关联查询语句没有加表的别名（或表名）的限制，正常运行两年后，最近在 某个表中增加一个同名字段，在预发布环境做数据库变更后，线上查询语句出现出
+```mysql
+1052 异常：Column 'name' in field list is ambiguous(模棱两可的)
+```
+
+#### 示例代码
+
+```mysql
+SELECT e.employee_id,e.last_name,e.department_id,d.department_id,d.location_id FROM employees e,departments d WHERE e.department_id=d.department_id;
+```
+### 非等值连接
+#### 案例
+查询雇员的工资程度，其工资范围应当在1000~40000
+
+![image-20220430113118904](E:\Typora\Mysql\image-20220430113118904.png)
+
+```mysql
+SELECT e.last_name ,e.salary,j.grade_level,j.lowest_sal,j.highest_sal FROM employees e,job_grades j WHERE e.salary BETWEEN j.lowest_sal AND j.highest_sal;
+```
+
+<img src="E:\Typora\Mysql\image-20220430115328004.png" alt="image-20220430115328004"  />
+
+
+
+
+
+
+
 ## 单行函数
 ## 聚合函数
 ## 子查询
