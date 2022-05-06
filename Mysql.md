@@ -670,9 +670,32 @@ SELECT manager.last_name,manager.department_id FROM employees worker,employees m
 
 ![image-20220501115946909](E:\Typora\Mysql\image-20220501115946909.png)
 ### 内连接
-	合并具有同一列的两个以上的表的行,结果集中不包含一个表与另一个表不匹配的行
+	INNER JOIN,合并具有同一列的两个以上的表的行,结果中不包含两表不匹配的行
+#### 模板
+	SELECT 字段列表 FROM A表 INNER JOIN B表 ON 关联条件 WHERE 等其他子句
+#### 例题一
+
+![image-20220501150315381](E:\Typora\Mysql\image-20220501150315381.png)
+
+```mysql
+select e.employee_id,e.last_name,e.department_id,d.department_id,d.location_id from employees e INNER JOIN departments d ON (e.department_id=d.department_id);
+```
+![image-20220501151939729](E:\Typora\Mysql\image-20220501151939729.png)
+
+#### 例题二
+
+![image-20220501151731781](E:\Typora\Mysql\image-20220501151731781.png)
+
+```mysql
+FROM employees e
+JOIN departments d
+ON d.department_id = e.department_id
+JOIN locations l
+ON d.location_id = l.location_id;
+```
+
 ### 外连接
-	两个表在连接过程中除了返回满足连接条件的行以外,还返回左（或右）表中不满足条件的行,这种连接称为左（或右）外连接。没有匹配的行时,结果表中相应的列为空
+	两个表在连接过程中除了返回满足连接条件的行以外,还返回左（或右）表中不满足条件的行,这种连接称为左（或右）外连接。没有匹配的行时,结果表中相 应的列为空
 	左外连接,则连接条件中左边的表也称为主表,右边的表称为从表
 	右外连接,则连接条件中右边的表也称为主表,左边的表称为从表
 
@@ -692,12 +715,26 @@ WHERE employees.department_id(+) = departments.department_id;
 ```
 
 ### MYSQL 中使用（JOIN...ON）实现多表查询
-	SQL99 采用的这种嵌套结构非常清爽、层次性更强、可读性更强,即使再多的表进行连接也都清晰可见。如果你采用 SQL92,可读性就会大打折扣。
+	SQL99 采用的这种嵌套结构非常清爽、层次性更强、可读性更强
+	关键字JOIN、INNER JOIN、CROSS JOIN 的含义相同,都表示内连接
+	可以使用 ON 子句指定额外的连接条件,这个连接条件是与其他条件分开的
+
 ```mysql
 SELECT table1.column, table2.column,table3.column FROM table1
 JOIN table2 ON table1 和 table2 的连接条件
 JOIN table3 ON table2 和 table3 的连接条件
 ```
+#### 嵌套逻辑
+```java
+//三层for循环，只有在同时满足条件一和条件二才可以执行
+	for t1 in table1:
+		for t2 in table2:
+			if condition1:
+				for t3 in table3:
+					if condition2:
+						output t1 + t2 + t3
+```
+
 
 
 
