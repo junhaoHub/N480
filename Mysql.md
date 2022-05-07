@@ -695,7 +695,7 @@ ON d.location_id = l.location_id;
 ```
 
 ### 外连接
-	两个表在连接过程中除了返回满足连接条件的行以外,还返回左（或右）表中不满足条件的行,这种连接称为左（或右）外连接。没有匹配的行时,结果表中相 应的列为空
+	两个表在连接过程中除了返回满足连接条件的行以外,还返回左（或右）表中不满足条件的行，没有匹配的行时，结果表中相应的列为NULL
 	左外连接,则连接条件中左边的表也称为主表,右边的表称为从表
 	右外连接,则连接条件中右边的表也称为主表,左边的表称为从表
 
@@ -703,6 +703,7 @@ ON d.location_id = l.location_id;
 	在SQL92中采用(+)代表从表所在的位置,即左或右外连接中,(+)表示哪个是从表
 	Oracle 对 SQL92 支持较好,而 MySQL 则不支持 SQL92 的外连接
 	在 SQL92 中,只有左外连接和右外连接，没有满（或全）外连接
+
 ```mysql
 #左外连接
 SELECT last_name,department_name
@@ -724,6 +725,47 @@ SELECT table1.column, table2.column,table3.column FROM table1
 JOIN table2 ON table1 和 table2 的连接条件
 JOIN table3 ON table2 和 table3 的连接条件
 ```
+#### LEFT JOIN
+
+```mysql
+#当左边的A表中的一行为NULL时，右边所对应的数据将不会被显示
+SELECT 字段列表
+FROM A表 LEFT JOIN B表
+ON 关联条件
+WHERE 等其他子句;
+```
+
+![image-20220506183918572](E:\Typora\Mysql\image-20220506183918572.png)
+
+#### RIGHT JOIN
+
+```mysql
+#当右边的B表中的一行为NULL时，左边所对应的数据将不会被显示
+SELECT 字段列表
+FROM A表 RIGHT JOIN B表
+ON 关联条件
+WHERE 等其他子句;
+```
+
+![image-20220506183853732](E:\Typora\Mysql\image-20220506183853732.png)
+
+#### 七重JOIN
+
+![image-20220506190423161](E:\Typora\Mysql\image-20220506190423161.png)
+
+#### 面试题：WHERE和ON的区别
+
+	ON条件是在生成临时表时使用的条件，他不管ON中的条件是否为真，都会返回左边表中的记录
+	WHERE条件是在临时表生成之后，再对临时表进行过滤的条件
+
+
+
+#### 满外连接(FULL OUTER JOIN)
+满外连接的结果 = 左右表匹配的数据 + 左表没有匹配到的数据 + 右表没有匹配到的数据
+
+	SQL99是支持满外连接的.使用FULL JOIN 或 FULL OUTER JOIN来实现
+	MySQL不支持FULL JOIN,但是可以用 LEFT JOIN UNION RIGHT join代替
+
 #### 嵌套逻辑
 ```java
 //三层for循环，只有在同时满足条件一和条件二才可以执行
@@ -733,6 +775,43 @@ JOIN table3 ON table2 和 table3 的连接条件
 				for t3 in table3:
 					if condition2:
 						output t1 + t2 + t3
+```
+
+### UNION
+	返回两个查询的结果集的并集，去除重复记录。给出多条SELECT语句，并将它们的结果组合成单个结果集。合并时，两个表对应的列数和数据类型必须相同，并且相互对应。各个SELECT语句之间使用UNION或UNION ALL关键字分隔。
+```mysql
+SELECT column,... FROM table1
+UNION [ALL]
+SELECT column,... FROM table2
+```
+```mysql
+# 查询部门编号>90或邮箱包含a的员工信息
+select * from employees where department_id >90
+UNION
+select * from employees where email like "%x%";
+```
+
+![image-20220506185323991](E:\Typora\Mysql\image-20220506185323991.png)
+
+#### UNION ALL
+
+	返回两个查询的结果集的并集。对于两个结果集的重复部分，不去重
+
+
+
+### 面试题：UNION和CONCATE的区别
+	UNION会去重复后合并，而CONCAT不去重直接合并，所以CONCAT速度比较快。如果不需要去重的话，选择使用Concat做合并性能较高。
+
+
+### USING
+使用using关键字来简化连接查询
+#### 规则
+	查询必须是等值连接
+	等值连接中的列必须具有相同的名称和数据类型。
+```mysql
+SELECT employee_id,last_name,department_name
+FROM employees e JOIN departments d
+USING (department_id);
 ```
 
 
