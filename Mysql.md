@@ -133,6 +133,12 @@ explain extended select * from film where id =1;
 ## table列
 	查询的语句所关联的表
 
+## type列
+	这一列表示Mysql决定如何查找表中的行，查找数据行记录的大概范围,依次从优到差分别是
+
+
+	system>const>eq_ref>ref>range>index>ALL
+
 ## const
 
 	直接按主键或唯一键读取,通常情况下,如果将一个主键放置到 where 后面作为条件查询,mysql 优化器就能把这次查询优化转化为一个常量.
